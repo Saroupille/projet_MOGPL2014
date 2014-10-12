@@ -30,6 +30,12 @@
 
 \usepackage{titling}%                  pour le titre
 
+\usepackage[framemethod=TikZ]{mdframed}% print frames
+
+\usepackage{caption}%                  for captionof
+
+\usepackage{listings}
+
 \usepackage{enumitem}%                 pour les listes numérotées
 
 \usepackage{microtype}%            améliorations typographiques
@@ -38,14 +44,119 @@
 
 \hypersetup{pdfstartview=XYZ}%         zoom par défaut
 
+%%%%%%%%%%%%%%%%%%%%%% CONFIGURATION %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mdfdefinestyle{MyFrame}{%
+    linecolor=black,
+    outerlinewidth=0pt,
+    roundcorner=10pt,
+    innertopmargin=\baselineskip,
+    innerbottommargin=\baselineskip,
+    innerrightmargin=20pt,
+    innerleftmargin=20pt,
+    backgroundcolor=black!10!white}
+
+\captionsetup[lstlisting]{labelformat=empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%% COMMANDES PL %%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\boldmin{\mathop{\mathbf{min}}}
+\newcommand\boldmax{\mathop{\mathbf{max}}}
+
+
+
+% I don't know how it works but it does !
+\def\foo#1#2{%
+\newenvironment{variables}
+{\paragraph{Variables :}
+#1{2}}
+{#2}}
+\expandafter\foo
+  \csname alignat*\expandafter\endcsname
+  \csname endalignat*\endcsname
+
+
+% \newenvironment{variables}
+% {  \paragraph{Variables :}
+  
+%   \alignat{2} }
+% {  \endalignat }
+
+\newenvironment{fonctionobj}
+{ \paragraph{Fonction objectif :}
+
+
+  }
+{  }
+
+\def\cons#1#2{%
+\newenvironment{contraintes}
+{\paragraph{Contraintes :}
+#1{2}}
+{#2}}
+\expandafter\cons
+  \csname alignat*\expandafter\endcsname
+  \csname endalignat*\endcsname
+
+
+\newcommand{\variable}[4]{\underbrace{#1}_{\mathclap{\text{#4}}} \in #2 &\ #3 \\}
+\newcommand{\fobj}[2]{\begin{alignat*}{2} #1 &\qquad \text{\footnotesize (#2)} \end{alignat*}}
+\newcommand{\constraint}[3]{#1 &,\ & #2 & 
+\if\relax\detokenize{#3}\relax
+\\
+\else
+\qquad \text{\footnotesize \textcolor{blue}{\textit{#3}}} \\ 
+\fi}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 \title{Rapport pour le projet de MOGPL}
 \date{\today}
 \author{Pierre Mahé \& François Thiré}
 
+ % Modèle pour écrire un programme linéaire
+ % \begin{alignat*}{2}
+ %    \text{minimize }   & \sum_{i=1}^m c_i x_i + \sum_{j=1}^n d_j t_j\  \\
+ %    \text{subject to } & \sum_{i=1}^m a_{ij} + e_j t_j \geq g_j &,\ & 1\leq j\leq n\\
+ %                       & f_i x_i + \sum_{j=1}^n b_{ij}t_j \geq h_i\ &,\ & 1\leq i\leq m\\
+ %                       & x\geq 0,\ t_j\geq 0\ &,\ & 1\leq j\leq n,\ 1\leq i\leq m
+ %  \end{alignat*}
+
+
 \begin{document}
 
 \maketitle
 
-To complete
+\section{Première modélisation du problème}
+\subsection{Question 1}
+
+
+
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{x_{i,j}}{\mathbb{B}}{1 \leq i,j \leq n}{Vaut $1$ si l'agent $a_i$ reçoit le bien $b_j$}
+\end{variables}
+
+\begin{fonctionobj}
+
+\fobj{\boldmax \ \frac{1}{n}\ \sum_{\substack{1\leq i,j \leq n}} u_{i,j}x_{i,j}}
+{avec $u_{i,j}$ les coefficients d'utilités du bien $i$ pour l'agent $j$}
+\end{fonctionobj}
+
+\begin{contraintes}
+   \constraint{\sum_{i=1}^n x_{i,j} =1}{ 1\leq j\leq n}{$1$ agent par bien}
+   \constraint{\sum_{j=1}^n x_{i,j} =1}{ 1\leq i\leq n}{$1$ bien par agent}
+\end{contraintes}
+
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{P}_0$}
+
+\section{Approche égalitariste}
+\section{Approche égalitariste en regrets}
+\section{Extension à l'affectation multiple}
 \end{document}
