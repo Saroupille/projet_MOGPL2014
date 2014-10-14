@@ -49,7 +49,7 @@ def parse_command_line(argv):
             print("\t-v (--verbose) : affiche des informations supplémentaires à l'écran")
             print("\t-w (--write) <nom fichier>: écrire le modèle dans un fichier ")
             print("\t-a (--answerfile) <nom fichier>: redirige la sortie standard dans un fichier")
-            print("\p-p (--printanswer) : écrit la solution sur la sortie standard")
+            print("\t-p (--printanswer) : écrit la solution sur la sortie standard")
             sys.exit(0)
             
         elif opt in ("-M", "--maxvalue"):
