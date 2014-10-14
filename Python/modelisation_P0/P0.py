@@ -3,7 +3,7 @@
 from gurobipy import *
 from random import triangular
 #parse command line
-import sys, getopt
+import sys, os, getopt
 #check the value float
 from math import isnan, isinf
 
@@ -12,11 +12,14 @@ from math import isnan, isinf
 ##     #by default the third argument of triangular is (high+low)/2
 ##     return [[triangular(0,value_max) for j in range(n)] for i in range(n)]
 
+def clean_string(filename):
+    return "".join([c for c in filename if c.isalpha() or c.isdigit() or c==' ']).rstrip()
 
 def parse_command_line(argv):
 
     try:
-        opts, args = getopt.getopt(argv, "hw:vM:n:",["help","maxvalue","size","verbose","write"])
+        opts, args = getopt.getopt(argv, "hw:vM:n:a:p", \
+                                   ["help","write", "verbose", "maxvalue","size","answerfile","printanswer"])
     #raise if an option is not in the list below
     except getopt.GetoptError: 
         print("Options non reconnues. Veuillez utiliser P0.py -h pour en savoir plus")
@@ -28,6 +31,8 @@ def parse_command_line(argv):
     options['verbose']=False
     options['write']=False
     options['filename']=None
+    options['answerfile']=None
+    options['printanswer']=False
     #value_max = None
     #size = None
     #verbose=False
@@ -42,7 +47,9 @@ def parse_command_line(argv):
             print("\t-n (--size) <entier> : Spécifier la taille du problème")
             print("\t-M (--maxvalue) <float> : Spécifier la valeur maximale pour les coefficients d'utilité")
             print("\t-v (--verbose) : affiche des informations supplémentaires à l'écran")
-            print("\t-w (--write) : écrire le modèle dans un fichier ")
+            print("\t-w (--write) <nom fichier>: écrire le modèle dans un fichier ")
+            print("\t-a (--answerfile) <nom fichier>: redirige la sortie standard dans un fichier")
+            print("\p-p (--printanswer) : écrit la solution sur la sortie standard")
             sys.exit(0)
             
         elif opt in ("-M", "--maxvalue"):
@@ -66,9 +73,12 @@ def parse_command_line(argv):
             options["verbose"]=True
         elif opt in("-w", "--write"):
             options["write"]=True
-            #check filename
-            options["filename"]=arg
-            
+            options["filename"]=clean_string(arg)
+        elif opt in("-a", "--answerfile"):
+            options["answerfile"]=clean_string(arg)
+        elif opt in("-p", "--printanswer"):
+            options["printanswer"]=True
+
     #if the user has not specified some parameters
     if options["size"] == None:
         print("Attention, pas de taille spécifiée pour le problème.")
@@ -151,18 +161,37 @@ def main(argv):
 
     #write the model in a file
     if options["write"]:
-        m.write(filename)
+        #check if the sub directory "models" exists and create it otherwise
+        if not os.path.isdir("models"):
+            os.mkdir("models")
+        m.write("models/"+options["filename"]+".lp")
 
     if options["verbose"]:
         print("Solving...")
     #solve the linear problem
     m.optimize()
-    
+
     #obj=m.getObjective()
     #print(obj)
     #print(m.getConstrs())
-    ## for v in m.getVars():
-    ##     print v.varName, v.x
+    if options["answerfile"]!=None:
+        #check the existence of the solutions directory
+        if not os.path.isdir("solutions"):
+            os.mkdir("solutions")
+        answerfile=open("solutions/"+options["answerfile"]+".sol","w")
+        #If the user has specified a model file
+        if options["write"]:
+            answerfile.write("Answers for model"+options["filename"])
+        
+        for v in m.getVars():
+            #python2 syntax
+            print >> answerfile, v.varName, v.x
+
+        answerfile.close()
+    if options["printanswer"]:
+        for v in m.getVars():
+            print(v.varName, v.x)
+
     
     #print 'Obj:', m.objVal
 
