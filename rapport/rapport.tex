@@ -38,7 +38,9 @@
 
 \usepackage{enumitem}%                 pour les listes numérotées
 
-\usepackage{microtype}%            améliorations typographiques
+\usepackage{microtype}%                améliorations typographiques
+
+\usepackage{csvsimple}%                 convertir un fichier .csv en tableau
 
 \usepackage{hyperref}%                 gestion des hyperliens
 
@@ -156,7 +158,68 @@
 \end{mdframed}
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_0$}
 
+\subsection{Question 2}
+Vous trouverez le code \textit{Python} du modèle \textit{PO}  dans le répertoire \textit{Python/modelisation\_P0}. 
+L'implémentation du modèle et la génération des tests se fait dans le fichier \textbf{P0.py}. Pour connaître les options possibles du programme, veuillez lancer la commande
+
+%TO DO : faire un meilleur rendu
+\begin{lstlisting}[language=bash]
+gurobi.sh P0.py -h
+\end{lstlisting}
+
+En particulier pour lancer le programme avec comme taille $n=100$ et $M=1000$ on utilisera la commande suivante :
+\begin{lstlisting}[language=bash]
+gurobi.sh P0.py -n 100 -M 1000
+\end{lstlisting}
+
+Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire la solution dans un fichier, alors le programme va créer respectivement deux sous-dossiers\footnote{à partir du dossier courant} \textit{modele} et \textit{solutions} qui contiendra ces fichiers.
+
+\subsection{Question 3}
+
+Nous avons automatisé la création des tableaux par un script \textit{bash} que vous trouverez dans le répertoire \textit{Python/modelisation\_P0/stats}. Ce programme va générer des fichiers \textit{csv} qui pourront ensuite être importés dans un fichier \LaTeX en utilisant le package \textit{csvsimple}. Voici donc les résultats trouvés :
+
+\begin{table}
+\csvautotabular{csv/data_10.csv}
+\caption{Résultats lorsque $M=10$}
+\end{table}
+
+\begin{table}
+\csvautotabular{csv/data_100.csv}
+\caption{Résultats lorsque $M=100$}
+\end{table}
+
+\begin{table}
+\csvautotabular{csv/data_1000.csv}
+\caption{Résultats lorsque $M=1000$}
+\end{table}
 \section{Approche égalitariste}
+\subsection{Question 4}
+\paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 
+
+Soit $n$ le nombre d'agents et le nombre de bien à répartir. Et soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
+On fait l'hypothèse que les coefficient de la mtrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
+On construit le graphe orienté suivant :
+$G=(V,E)$ où 
+\begin{itemize}
+\item $V=\{s,u_1,_u2,\dots, u_n, b_1,b_2,\dots, b_n,p\}$
+\item $\forall i,j \in \{1,\dots, n\} $
+  \begin{itemize}
+  \item $(u_i,b_j)\in E $
+  \item $(s,u_i)\in E$
+  \item $(b_j,p) \in E$
+  \end{itemize}
+\end{itemize}  
+
+Il reste à décrire les capacités sur chaque arc.  $\forall i,j \in \{1, \dots, n\}$
+\begin{itemize}
+\item $c(u_i,b_j)=u_{i,j}-\lambda$
+\item $c(s,u_i)=\min \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
+\item $c(b_j,b_j)=\min\{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
+\end{itemize}
+
+\paragraph{Justification de la construction du graphe : }
+
+
 \section{Approche égalitariste en regrets}
 \section{Extension à l'affectation multiple}
 \end{document}

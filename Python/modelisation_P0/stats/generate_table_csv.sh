@@ -1,5 +1,11 @@
 #!/bin/sh
 
+#TO DO :
+# * rajouter une option pour supprimer les fichiers temporaires
+# * rajouter une option pour supprimer les fichiers solutions
+# * delete files csv if they already exist
+# * améliorer le script
+
 #number of test case for a n and a M fixed
 test_number=10
 #size="10 50"
@@ -38,7 +44,7 @@ for m in ${max_value}
 do
 	echo "start new csv file for m=${m}"
 	#header of the table
-	echo "n, temps moyen, , satisfaction moyenne, satisfaction minimum, satisfaction maximum" \
+	echo "n, temps moyen, satisfaction moyenne, satisfaction minimum, satisfaction maximum" \
 		>> csv/data_${m}.csv
 	#iterate over n
 	for n in ${size}
@@ -85,5 +91,4 @@ cut -d' ' -f2,3 | sort | tail -n ${number_of_lines}"
 		echo "${n}, ${time_avg}, ${current_avg}, ${current_min}, ${current_max}" >> csv/data_${m}.csv
 		echo "end processing data"
 	done
-
 done

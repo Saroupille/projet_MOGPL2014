@@ -13,7 +13,7 @@ from math import isnan, isinf
 ##     return [[triangular(0,value_max) for j in range(n)] for i in range(n)]
 
 def clean_string(filename):
-    return "".join([c for c in filename if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+    return "".join([c for c in filename if c.isalpha() or c.isdigit() or c=='_']).rstrip()
 
 def parse_command_line(argv):
 
@@ -42,7 +42,7 @@ def parse_command_line(argv):
     
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print("P0.py -M <value max for the coef. matrix> -n <size of the problem> [-v]")
+            print("gurobi.sh P0.py -M <value max for the coef. matrix> -n <size of the problem> [-v]")
             print("Options :")
             print("\t-n (--size) <entier> : Spécifier la taille du problème")
             print("\t-M (--maxvalue) <float> : Spécifier la valeur maximale pour les coefficients d'utilité")
@@ -155,7 +155,7 @@ def createModel(options):
     return m
 
 #main function
-def main(argv):
+def main(argv, current_directory):
     options=parse_command_line(argv)
     m=createModel(options)
 
@@ -164,7 +164,7 @@ def main(argv):
         #check if the sub directory "models" exists and create it otherwise
         if not os.path.isdir("models"):
             os.mkdir("models")
-        m.write("models/"+options["filename"]+".lp")
+        m.write(os.getcwd()+"models/"+options["filename"]+".lp")
 
     if options["verbose"]:
         print("Solving...")
@@ -174,8 +174,11 @@ def main(argv):
     #obj=m.getObjective()
     #print(obj)
     #print(m.getConstrs())
+    print(system("pwd"))
     if options["answerfile"]!=None:
+
         #check the existence of the solutions directory
+        print("solutions/"+options["answerfile"])
         if not os.path.isdir("solutions"):
             os.mkdir("solutions")
         answerfile=open("solutions/"+options["answerfile"]+".sol","w")
@@ -185,12 +188,12 @@ def main(argv):
         
         for v in m.getVars():
             #python2 syntax
-            print >> answerfile, v.varName, v.x
+            print >> answerfile, v.varName, v.x, v.getAttr("Obj")
 
         answerfile.close()
     if options["printanswer"]:
         for v in m.getVars():
-            print(v.varName, v.x)
+            print(v.varName, v.x, v.getAttr("Obj"))
 
     
     #print 'Obj:', m.objVal
@@ -198,6 +201,6 @@ def main(argv):
 #Entry point of the program
 if __name__ =="__main__":
     #delete the first argument which is the path of the program
-    main(sys.argv[1:])
+    main(sys.argv[1:], sys.argv[0])
 
 
