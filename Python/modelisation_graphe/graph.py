@@ -129,13 +129,21 @@ def getCapacity(G,coef,Lambda,size):
 
     return capacity
 
+def isValid(G,residual):
+    Edges_s=G["edges_source"]
+    for x in Edges_s:
+        if residual[x]>1e-5: #tolerance
+            return False
+    else:
+        return True
+    
 def printResults(G, capacity, residual):
     g=G["graph"]
     Edges_s=G["edges_source"]
     Edges_t=G["edges_target"]
     Edges_c=G["edges_central"]
     for x,y in zip(Edges_s,Edges_t):
-        print("machin")
+        print("capacity :")
         print(capacity[x],capacity[y])
         print(residual[x],residual[y])
 
@@ -172,7 +180,11 @@ def main(argv, current_directory):
     printCapacity(G, capacity)
     residual=g.new_edge_property("double")
     edmonds_karp_max_flow(g,s,t,capacity,residual)
-    printResults(G,capacity,residual)
+    printResults(G,capacity, residual)
+    if isValid(G,residual):
+        print("YES")
+    else:
+        print("NO")
 
 
     
