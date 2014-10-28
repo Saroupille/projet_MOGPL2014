@@ -1,8 +1,11 @@
 from graph_tool import *
 from graph_tool.draw import *
 from graph_tool.flow import *
+from functools import reduce
 import sys, getopt, subprocess
 
+
+#TODO : clean this stuff
 def parse_command_line(argv):
 
     try:
@@ -55,28 +58,28 @@ def parse_command_line(argv):
             
     return options
 
-
+#parse the model generated to find the capacities for the graph
+#the capacities are the coefficients of the objective function
 def getCoef():
     f=open("models/model.lp", "r")
-    f.readline()
+    f.readline() #useless line
     obj_func=list()
     for line in f:
+        #all the line 'till subject contains the coefficients
         if line.startswith("Subject"):
             break
-        
         obj_func+=line.strip().split(' ')
 
-    #WTF ???? + shouldnt be trated this way
-    coef=list(map(lambda x: x.strip('+'), obj_func))
-    coef=list(filter(None, coef))
-    for i,x in enumerate(coef):
+    #get only the numbers
+    coef=list()
+    for x in obj_func:
         try:
-            coef[i]=float(x)
+            coef.append(float(x))
         except:
-            coef.remove(x)
+            pass
 
-    coef=list(map(float, coef))
     return coef
+            
 #main function
 
 def createGraph(coef,size):
@@ -114,19 +117,15 @@ def getCapacity(G,coef,Lambda,size):
     Edges_t=G["edges_target"]
     Edges_c=G["edges_central"]
     capacity=g.new_edge_property("double")
+    print(coef)
+    new_coef=list(map(lambda x: x-Lambda, coef))
+    min_pos=lambda x,y: x if y <0 else y if x <0 else min(x,y)
+    min_coef=reduce(min_pos,new_coef)
     for x in range(size):
-        min_s=None
-        min_t=None
         for y in range(size):
-            tmp_s=coef[size*x+y]-Lambda
-            tmp_t=coef[x+size*y]-Lambda
-            capacity[Edges_c[size*x+y]]=tmp_s
-            if min_s == None or (tmp_s>0 and tmp_s<min_s):
-                min_s=tmp_s
-            if min_t == None or (tmp_t>0 and tmp_t<min_t):
-                min_t=tmp_t
-        capacity[Edges_s[x]]=min_s
-        capacity[Edges_t[x]]=min_t
+            capacity[Edges_c[size*x+y]]=new_coef[size*x+y]
+        capacity[Edges_s[x]]=min_coef
+        capacity[Edges_t[x]]=min_coef
 
     return capacity
 
@@ -135,20 +134,26 @@ def printResults(G, capacity, residual):
     Edges_s=G["edges_source"]
     Edges_t=G["edges_target"]
     Edges_c=G["edges_central"]
-    for x in Edges_s:
+    for x,y in zip(Edges_s,Edges_t):
         print("machin")
+        print(capacity[x],capacity[y])
+        print(residual[x],residual[y])
+
+def printCapacity(G, capacity):
+    g=G["graph"]
+    for x in g.edges():
+        print(x)
         print(capacity[x])
-        print(residual[x])
-        
+         
 def main(argv, current_directory):
     options=parse_command_line(argv)
+    #clean main
     model_options=["../modelisation_P0/P0.py", "--notsolve ","-w","model"]
     if not options["size"]:
         options["size"]=10
     if not options["value_max"]:
         options["value_max"]=10
 
-        
     model_options.extend(["-n",str(options["size"])])
     model_options.extend(["-M", str(options["value_max"])])
 
@@ -159,17 +164,16 @@ def main(argv, current_directory):
 
     coef=getCoef()
     G=createGraph(coef,options['size'])
-    Lambda=0
+    Lambda=6
     g=G["graph"]
     s=G["source"]
     t=G["target"]
     capacity=getCapacity(G,coef,Lambda,options['size'])
+    printCapacity(G, capacity)
     residual=g.new_edge_property("double")
     edmonds_karp_max_flow(g,s,t,capacity,residual)
     printResults(G,capacity,residual)
-#    random_layout(graph)
-    #graph_draw(G, output="test.pdf")
-#    subprocess.call(["../modelisation_P0/P0.py",' '.join(model_options)])
+
 
     
 #Entry point of the program
