@@ -119,7 +119,7 @@ def getCapacity(G,coef,Lambda,size):
     capacity=g.new_edge_property("double")
     print(coef)
     new_coef=list(map(lambda x: x-Lambda, coef))
-    min_pos=lambda x,y: x if y <0 else y if x <0 else min(x,y)
+    min_pos=lambda x,y: x if y <=0 else y if x <=0 else min(x,y)
     min_coef=reduce(min_pos,new_coef)
     for x in range(size):
         for y in range(size):
@@ -127,7 +127,7 @@ def getCapacity(G,coef,Lambda,size):
         capacity[Edges_s[x]]=min_coef
         capacity[Edges_t[x]]=min_coef
 
-    return capacity
+    return (capacity,min_coef+Lambda)
 
 def isValid(G,residual):
     Edges_s=G["edges_source"]
@@ -172,22 +172,22 @@ def main(argv, current_directory):
 
     coef=getCoef()
     G=createGraph(coef,options['size'])
-    Lambda=6
-    g=G["graph"]
-    s=G["source"]
-    t=G["target"]
-    capacity=getCapacity(G,coef,Lambda,options['size'])
-    printCapacity(G, capacity)
-    residual=g.new_edge_property("double")
-    edmonds_karp_max_flow(g,s,t,capacity,residual)
-    printResults(G,capacity, residual)
-    if isValid(G,residual):
-        print("YES")
-    else:
-        print("NO")
+    Lambda=0
+    valid=True
+    while valid:
+        lambda_max=Lambda
+        print("Lambda",Lambda)
+        g=G["graph"]
+        s=G["source"]
+        t=G["target"]
+        (capacity,Lambda)=getCapacity(G,coef,Lambda,options['size'])
+        printCapacity(G, capacity)
+        input()
+        residual=g.new_edge_property("double")
+        edmonds_karp_max_flow(g,s,t,capacity,residual)
+        valid=isValid(G, residual)        
 
-
-    
+    print(lambda_max)
 #Entry point of the program
 if __name__ =="__main__":
     #delete the first argument which is the path of the program
