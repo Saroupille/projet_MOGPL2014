@@ -197,9 +197,16 @@ def main(argv, current_directory):
             print >> answerfile, v.varName, v.x, v.getAttr("Obj")
 
         answerfile.close()
+    #TO DO : change this stuff
     if options["printanswer"]:
+        constraints=[m.getConstrByName("z"+str(i)) for i in range(options["size"])]
         for v in m.getVars():
-            print(v.varName,v.x,v.getAttr("Obj"))
+            if v.varName!="zmin":
+                for c in constraints:
+                    if m.getCoeff(c,v)!=0:
+                        print(v.varName,v.x,m.getCoeff(c,v))
+            else:
+                print(v.varName,v.x,m.getCoeff(c,v))
 
     
     #print 'Obj:', m.objVal
