@@ -122,7 +122,7 @@ def setObjectiveFunction(m, options, Variables):
         for j in range(size):
             #for each variable, we add its coefficient in the objective function
             #the coefficient is a random value following a triangular law of parameter [0;M] center in M/2
-            Variables[i][j].setAttr("Obj", triangular(0,value_max))
+            Variables[i][j].setAttr("Obj", triangular(0,value_max)/size)
 
     
     m.setAttr("ModelSense", GRB.MAXIMIZE)
