@@ -38,6 +38,7 @@ do
 	sum="0"
 	compt="0"
 	min="100000"   # SALE SALE SALE
+	max="0"
 
 	echo "compute the models when n=${n}"
 	command_run_model_P0="${CC} ${MODELP0} -p -n ${n} -M ${max_M} > P0_${n}.sol"
@@ -57,11 +58,18 @@ do
 				compt+="+ 1"
 				sum+="+ ${var22}"
 
-				tmp="$(echo "${min} > ${var22}" | bc)"
-				if [ "$tmp" -eq 1 ]
+				tmpmin="$(echo "${min} > ${var22}" | bc)"
+				if [ "$tmpmin" -eq 1 ]
 				then
 					#echo "min $min, var $var22" 
 					min="$var22"
+				fi
+
+				tmpmax="$(echo "${max} < ${var22}" | bc)"
+				if [ "$tmpmax" -eq 1 ]
+				then
+					#echo "min $min, var $var22" 
+					max="$var22"
 				fi
 			fi
 
@@ -72,8 +80,8 @@ do
 
 	#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
 	echo $(echo "$compt" | bc)
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}"	
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}" >> "$CSV/data.csv"
+	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}"	
+	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}" >> "$CSV/data.csv"
 
 	command_run_model_P1="${CC} ${MODELP1} -p -n ${n} -M ${max_M} > P1_${n}.sol"
 	eval "${command_run_model_P1}"
@@ -81,6 +89,7 @@ do
 	sum="0"
 	compt="0"
 	min="100000"
+	max="0"
 
 	while read line  
 	do   
@@ -95,11 +104,18 @@ do
 				compt+="+ 1"
 				sum+="+ ${var22}"
 
-				tmp="$(echo "${min} > ${var22}" | bc)"
-				if [ "$tmp" -eq 1 ]
+				tmpmin="$(echo "${min} > ${var22}" | bc)"
+				if [ "$tmpmin" -eq 1 ]
 				then
 					#echo "min $min, var $var22" 
 					min="$var22"
+				fi
+
+				tmpmax="$(echo "${max} < ${var22}" | bc)"
+				if [ "$tmpmax" -eq 1 ]
+				then
+					#echo "max $max, var $var22" 
+					max="$var22"
 				fi
 			fi
 		fi
@@ -108,8 +124,8 @@ do
 
 	#format CSV: P1, VALEUR N, moyen, min, max, distance max-min
 	echo $(echo "$compt" | bc)
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}"
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}" >> "$CSV/data.csv"
+	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}"
+	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}" >> "$CSV/data.csv"
 	
 	
 done
