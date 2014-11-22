@@ -150,7 +150,7 @@ def addConstraints(m,options, Variables,zmin):
 def createModel(options):
     if options["verbose"]:
         print("Creating the model...")
-    m= Model("P0")
+    m= Model("P1")
     Variables,zmin=createVariables(m, options)
     m.update()
     setObjectiveFunction(m, options, zmin)
@@ -199,7 +199,7 @@ def main(argv, current_directory):
         answerfile.close()
     if options["printanswer"]:
         for v in m.getVars():
-            print(v.varName, v.x, v.getAttr("Obj"))
+            print(v.varName,v.x,v.getAttr("Obj"))
 
     
     #print 'Obj:', m.objVal
