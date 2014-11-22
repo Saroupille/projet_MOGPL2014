@@ -18,8 +18,8 @@ def clean_string(filename):
 def parse_command_line(argv):
 
     try:
-        opts, args = getopt.getopt(argv, "hw:vM:n:a:p", \
-                                   ["help","write", "verbose", "maxvalue","size","answerfile","printanswer"])
+        opts, args = getopt.getopt(argv, "hdw:vM:n:a:p", \
+                                   ["help","notsolve","write", "verbose", "maxvalue","size","answerfile","printanswer"])
     #raise if an option is not in the list below
     except getopt.GetoptError: 
         print("Options non reconnues. Veuillez utiliser P0.py -h pour en savoir plus")
@@ -33,6 +33,7 @@ def parse_command_line(argv):
     options['filename']=None
     options['answerfile']=None
     options['printanswer']=False
+    options['solve']=True
     #value_max = None
     #size = None
     #verbose=False
@@ -50,6 +51,7 @@ def parse_command_line(argv):
             print("\t-w (--write) <nom fichier>: écrire le modèle dans un fichier ")
             print("\t-a (--answerfile) <nom fichier>: redirige la sortie standard dans un fichier")
             print("\t-p (--printanswer) : écrit la solution sur la sortie standard")
+            print("\t--notsolve) : ne résoud pas le modèle généré")
             sys.exit(0)
             
         elif opt in ("-M", "--maxvalue"):
@@ -78,7 +80,9 @@ def parse_command_line(argv):
             options["answerfile"]=clean_string(arg)
         elif opt in("-p", "--printanswer"):
             options["printanswer"]=True
-
+        elif opt in("-d", "--notsolve"):
+            options["solve"]=False
+            
     #if the user has not specified some parameters
     if options["size"] == None:
         print("Attention, pas de taille spécifiée pour le problème.")
@@ -164,18 +168,19 @@ def main(argv, current_directory):
         #check if the sub directory "models" exists and create it otherwise
         if not os.path.isdir("models"):
             os.mkdir("models")
-        m.write(os.getcwd()+"models/"+options["filename"]+".lp")
+        m.write("models/"+options["filename"]+".lp")
 
-    if options["verbose"]:
-        print("Solving...")
+    if options["solve"]:
+        if options["verbose"]:
+            print("Solving...")
     #solve the linear problem
-    m.optimize()
+        m.optimize()
 
     #obj=m.getObjective()
     #print(obj)
     #print(m.getConstrs())
-    print(system("pwd"))
-    if options["answerfile"]!=None:
+    #print(system("pwd"))
+    if options["solve"] and options["answerfile"]!=None:
 
         #check the existence of the solutions directory
         print("solutions/"+options["answerfile"])

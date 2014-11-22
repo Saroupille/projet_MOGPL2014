@@ -8,9 +8,9 @@
 
 #number of test case for a n and a M fixed
 test_number=10
-#size="10 50"
+size="10 50"
 #every value of n
-size="10 50 100 500 1000"
+#size="10 50 100 500 1000"
 #every value of M
 max_value="10 100 1000"
 
@@ -30,12 +30,14 @@ TMP=tmp
 CSV=csv
 
 #check if the tmp directory exists
-if [ ! -d "$TMP" ]; then
+if [ ! -d "$TMP" ]
+then
 	$(mkdir tmp)
 fi
 
 #the same for csv
-if [ ! -d "$CSV" ]; then
+if [ ! -d "$CSV" ]
+then
 	$(mkdir csv)
 fi
 
