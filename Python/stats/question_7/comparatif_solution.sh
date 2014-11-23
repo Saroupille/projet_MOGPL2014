@@ -80,8 +80,8 @@ do
 
 	#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
 	echo $(echo "$compt" | bc)
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}"	
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}" >> "$CSV/data.csv"
+	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)"	
+	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)" >> "$CSV/data.csv"
 
 	command_run_model_P1="${CC} ${MODELP1} -p -n ${n} -M ${max_M} > P1_${n}.sol"
 	eval "${command_run_model_P1}"
@@ -124,8 +124,8 @@ do
 
 	#format CSV: P1, VALEUR N, moyen, min, max, distance max-min
 	echo $(echo "$compt" | bc)
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}"
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}" >> "$CSV/data.csv"
+	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)"
+	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc) e" >> "$CSV/data.csv"
 	
 	
 done
