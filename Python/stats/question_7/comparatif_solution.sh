@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #number of test case for a n and a M fixed
-test_number="5 10 15 20	"
+test_number="2 5 10 15 20 25 30"
 max_M="100"
 
 #where is the model P0
@@ -79,15 +79,18 @@ do
 	#echo "$(echo "$compt" | bc), $(echo "$sum" | bc)" > "${SOLUTIONS}/P0_${n}moy.tmp"
 
 	#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
-	echo $(echo "$compt" | bc)
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)"	
-	echo "P0, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)" >> "$CSV/data.csv"
+	compt=$(echo "$compt" | bc)
+	sum=$(echo "$sum" | bc)
+	moy=$(echo ${sum}/${compt} | bc)
+	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc)"
+	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc)" >> "$CSV/data.csv" 
 
 	command_run_model_P1="${CC} ${MODELP1} -p -n ${n} -M ${max_M} > P1_${n}.sol"
 	eval "${command_run_model_P1}"
 
 	sum="0"
 	compt="0"
+	moy="0"
 	min="100000"
 	max="0"
 
@@ -121,12 +124,39 @@ do
 		fi
 	done < P1_${n}.sol
 
+	compt=$(echo "$compt" | bc)
+	sum=$(echo "$sum" | bc)
+	moy=$(echo ${sum}/${compt} | bc)
+	
+	echo "test sur l'ecrat type"
+	sumome="0"
+	ome="0"
+	while read line  
+	do   
+		if [ "${line:0:2}" = "(u" ]
+		then 
+			IFS="," 
+			read -r var1 var2  <<< "${line:2:(${#line}-3)}"
+			read -r var21 var22 <<< "${var2}"
+			echo "${var21},${var22}" >> "${SOLUTIONS}/P1_${n}.sol"
+			if [  "${var21:1:1}" = "1" ]
+			then
+				#si varrible utilisé
+				tmpo=$(echo "${var22} - ${moy}" | bc)
+				#echo $tmpo
+				tmpo=$(echo "${tmpo} * ${tmpo}" | bc )
+				sumome=$(echo "${sumome}+${tmpo}" | bc )
+			fi
+		fi
+	done < P1_${n}.sol
+
+	ome=$(echo "${sumome}/${compt}" | bc )
+	ome=$(echo "sqrt(${ome})" | bc )
 
 	#format CSV: P1, VALEUR N, moyen, min, max, distance max-min
-	echo $(echo "$compt" | bc)
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc)"
-	echo "P1, ${n}, $(echo $(echo "$(echo "$sum" | bc)/$(echo "$compt" | bc)") | bc), ${min}, ${max}, $(echo "${max}-${min}" | bc) e" >> "$CSV/data.csv"
-	
+	echo "P1, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc), ${ome}"
+	echo "P1, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc), ${ome}" >> "$CSV/data.csv"
+
 	
 done
 echo "fin"
