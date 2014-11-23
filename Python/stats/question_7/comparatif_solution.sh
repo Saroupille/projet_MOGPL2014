@@ -124,11 +124,11 @@ do
 		ecartGlobal=$(echo "${ecartGlobal} + ${ome}" | bc -l)
 
 	done
-	moyGlobal=$(echo "${moyGlobal} / ${nb_test}" | bc -l)
-	maxGlobal=$(echo "${maxGlobal} / ${nb_test}" | bc -l)
-	minGlobal=$(echo "${minGlobal} / ${nb_test}" | bc -l)
-	maxminGlobal=$(echo "${maxminGlobal} / ${nb_test}" | bc -l)
-	ecartGlobal=$(echo "${ecartGlobal} / ${nb_test}" | bc -l)
+	moyGlobal=$(echo "scale=2; ${moyGlobal} / ${nb_test}" | bc -l)
+	maxGlobal=$(echo "scale=2; ${maxGlobal} / ${nb_test}" | bc -l)
+	minGlobal=$(echo "scale=2; ${minGlobal} / ${nb_test}" | bc -l)
+	maxminGlobal=$(echo "scale=2; ${maxminGlobal} / ${nb_test}" | bc -l)
+	ecartGlobal=$(echo "scale=2; ${ecartGlobal} / ${nb_test}" | bc -l)
 
 
 	echo "GLOBAL P0 ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
@@ -223,11 +223,11 @@ do
 		ecartGlobal=$(echo "${ecartGlobal} + ${ome}" | bc -l)
 	done
 
-	moyGlobal=$(echo "${moyGlobal} / ${nb_test}" | bc -l)
-	maxGlobal=$(echo "${maxGlobal} / ${nb_test}" | bc -l)
-	minGlobal=$(echo "${minGlobal} / ${nb_test}" | bc -l )
-	maxminGlobal=$(echo "${maxminGlobal} / ${nb_test}" | bc -l)
-	ecartGlobal=$(echo "${ecartGlobal} / ${nb_test}" | bc -l)
+	moyGlobal=$(echo "scale=2; ${moyGlobal} / ${nb_test}" | bc -l)
+	maxGlobal=$(echo "scale=2; ${maxGlobal} / ${nb_test}" | bc -l)
+	minGlobal=$(echo "scale=2; ${minGlobal} / ${nb_test}" | bc -l )
+	maxminGlobal=$(echo "scale=2; ${maxminGlobal} / ${nb_test}" | bc -l)
+	ecartGlobal=$(echo "scale=2; ${ecartGlobal} / ${nb_test}" | bc -l)
 
 
 	echo "GLOBAL P1 ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
