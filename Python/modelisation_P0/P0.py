@@ -198,7 +198,7 @@ def main(argv, current_directory):
         answerfile.close()
     if options["printanswer"]:
         for v in m.getVars():
-            print(v.varName,v.x,v.getAttr("Obj"))
+            print(v.varName,v.x,v.getAttr("Obj")*options["size"])
 
     
     #print 'Obj:', m.objVal
