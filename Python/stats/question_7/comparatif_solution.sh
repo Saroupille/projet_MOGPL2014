@@ -1,9 +1,9 @@
 #!/bin/sh
 
 #number of test case for a n and a M fixed
-nb_test="10"
+nb_test="50"
 val_max_n="10"
-max_M="1000"
+max_M="100"
 
 #where is the model P0
 MODELP0="../../modelisation_P0/P0.py"

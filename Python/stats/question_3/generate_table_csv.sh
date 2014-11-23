@@ -15,7 +15,7 @@ size="10 50"
 max_value="10 100 1000"
 
 #where is the model
-MODEL="../P0.py"
+MODEL="../../modelisation_P0/P0.py"
 
 #executable
 CC="gurobi.sh"
@@ -33,13 +33,18 @@ CSV=csv
 if [ ! -d "$TMP" ]
 then
 	$(mkdir tmp)
+else
+	rm -fr $TMP/*
 fi
 
 #the same for csv
 if [ ! -d "$CSV" ]
 then
 	$(mkdir csv)
+else
+	rm -fr $CSV/*
 fi
+
 
 #iterate over m
 for m in ${max_value}

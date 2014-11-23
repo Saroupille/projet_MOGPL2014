@@ -244,6 +244,15 @@ On formule le programme linéaire suivant :
 
 \subsection{Question 6}
 \subsection{Question 7}
+\begin{table}
+\csvautotabular {csv/res_5.csv}
+\caption{comparatif du modèle max et maxmin pour n=5  }
+\csvautotabular {csv/res_10.csv}
+\caption{comparatif du modèle max et maxmin pour n=10 }
+\end{table}
+
+Nous pouvons remarquer que chercher à maximiser la satisfaction de l'agent le moins satisfait entraine une diminution de la satisfaction moyenne des agents mais cela entrainera également la diminution de l'écart entre l'agent le moins satisfait et l'agent le plus satisfait, ainsi que l'écart type. Il y a moins donc moins de différence de satisfaction entre les agents.\\
+L'approche maxmin sera donc plus équitable que celle de la maximisation simple, mais entrainera un satisfaction globalement moins grande pour les agents.
 
 \subsection{Question 8}
 
