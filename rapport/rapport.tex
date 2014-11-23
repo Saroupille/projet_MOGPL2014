@@ -1,3 +1,4 @@
+
 \documentclass[a4paper, titlepage, oneside, 12pt]{article}%      autres choix : book  report
 
 \usepackage[utf8]{inputenc}%           gestion des accents (source)
@@ -245,12 +246,165 @@ On formule le programme linéaire suivant :
 \subsection{Question 7}
 
 \subsection{Question 8}
+
+\subsubsection{Modélisation de $\mathcal{P}_2$}
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{x_{i,j}}{\mathbb{B}}{1 \leq i,j \leq n}{Vaut $1$ si l'agent $a_i$ reçoit le bien $b_j$}
+\variable{z_{min}}{\mathbb{R}^+}{}{Satisfaction minimum d'un agent parmi tous les agents}
+\end{variables}
+
+\begin{fonctionobj}
+\fobj{\boldmax z_{min}+ \sum_{\substack{1\leq i,j \leq n}} \varepsilon u_{i,j}x_{i,j} } {}
+\end{fonctionobj}
+
+\begin{contraintes}
+    \constraint{\sum_{i=1}^n x_{i,j} =1}{ 1\leq j\leq n}{$1$ agent par bien}
+    \constraint{\sum_{j=1}^n x_{i,j} =1}{ 1\leq i\leq n}{$1$ bien par agent}
+    \constraint{ \sum_{\substack{1\leq i,j \leq n}} u_{i,j}x_{i,j} -z_{min} \geq 0}{1\leq i \leq n}{$z_{min}$ doit être plus petit que la satisfaction de l'agent $i$}
+\end{contraintes}
+
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{P}_2$}
+
+\subsubsection{Comparaison de $\mathcal{P}_1$ avec $\mathcal{P}_2$}
+
+Soit le problème suivant :
+\begin{quotation}
+L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne et avec Debain d'installé. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
+\begin{itemize}
+\item Mr Michu souhaite un ordinateur pour faire de la bureautique. Il n'a pas de préférence personnel.
+\item Mr Zuckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
+\end{itemize}
+
+La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de MR. Zuckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
+
+L'association a définit que l'utilité de Mr Michu pour les des deux ordinateurs est $2$ puisque ce dernier n'a pas de préférence.
+Par contre, pour Mr Zuckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
+\end{quotation}
+
+On peut évidemment modéliser ce problème comme un problème d'affectation. On obtient donc $4$ variables à savoir :
+\begin{itemize}
+\item $x_{Michu, Mac}$~;
+\item $x_{Michu, PC}$~;
+\item $x_{Zuckerberg, Mac}$~;
+\item $x_{Zuckerberg, Mac}$~;
+\end{itemize}
+
+Leurs coefficients dans la fonction objectif sont donnés directement dans le problème. Par le programme $\mathcal{P}_1$, il y a deux solutions possibles : 
+\begin{enumerate}
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(1,0,0,1)~;
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(0,1,1,0)~;
+\end{enumerate}
+
+En effet, dans la deux cas, la satisfaction associée à Mr Michu est de $2$ et la satisfaction de Mr Zuckerberg est plus  grande.
+
+A l'inverse, par le programme $\mathcal{P}_2$, il y a qu'une solution possible :
+\begin{itemize}
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(1,0,0,1)~;
+\end{itemize}
+
+En effet, la satisfaction de Mr Zuckerberg est plus grande dans la solution $1$ que dans la solution $2$. Cela entraîne donc que la fonction objectif est plus grande dans la solution $1$ que dans la solution $2$ car la satisfaction de Mr Michu n'a pas changé.
+
+On vient donc de trouver deux solutions différentes tel qu'avec le programme $\mathcal{P}_1$ la satisfaction de Mr Suckerberg soit strictement plus petit que dans la solution du programme $\mathcal{P}_2$ tandis que celle de Mr Michu n'a pas changé.
+
+Les remarques qu'on peut en tirer c'est que maximiser seulement la satisfaction de l'agent le moins satisfait n'est pas suffisant. En effet, comme on le voit dans l'exemple précédent, il peut y avoir plusieurs solutions et alors on ne sait pas laquelle sera donnée par le simplexe. Afin de pallier ce problème, il faut dire au simplexe qu'il faut tout de même maximiser la satisfaction des agents sans pour autant outrepasser l'objectif premier de maximiser la satisfaction de l'agent le moins satisfait. Pour cela, on rajoute un facteur $\varepsilon$ qui permet de différencier les différentes solutions possibles trouvées par le programme $\mathcal{P}_1$.
+
+
+
 \section{Approche égalitariste en regrets}
 
 \subsection{Question 9}
+
+\subsubsection{Modélisation de $\mathcal{P}_3$}
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{x_{i,j}}{\mathbb{B}}{1 \leq i,j \leq n}{Vaut $1$ si l'agent $a_i$ reçoit le bien $b_j$}
+\variable{r_{max}}{\mathbb{R}^+}{}{Satisfaction minimum d'un agent parmi tous les agents}
+\end{variables}
+
+\begin{fonctionobj}
+\fobj{\boldmax r_{max}} {}
+\end{fonctionobj}
+
+\begin{contraintes}
+    \constraint{\sum_{i=1}^n x_{i,j} =1}{ 1\leq j\leq n}{$1$ agent par bien}
+    \constraint{\sum_{j=1}^n x_{i,j} =1}{ 1\leq i\leq n}{$1$ bien par agent}
+    \constraint{ \sum_{\substack{1\leq i,j \leq n}} u_{i,j}x_{i,j} +r_{max} \geq z_i*}{1\leq i \leq n}{$r_{max}$ doit être plus grand que le regret de l'agent $i$}
+\end{contraintes}
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{P}_3$}
+
 \subsection{Question 10}
+En fait on peut voir l'approche égalitariste comme étend un problème \textit{dual} à l'approche égalitariste. En particulier, l'algorithme proposée à la question $4$ sera similaire à celui-ci.
+
+Dans un premier temps, on s'intéresse au problème où les regrets de chaque agent sont plus petit que $\mu$ avec $\mu \in [0,M]$. De façon analogue, ce problème peut se traduire en un problème de flot maximum comme à la question $4$.
+
+L'algorithme consiste cette fois à prendre $\mu=M$ et de réduire succéssivement $\mu$ pour trouver la valeur minimale.
+
+
 \subsection{Question 11}
+
 \section{Extension à l'affectation multiple}
+
+\subsection{Question 12}
+
+L'affectation multiple est une généralisation du problème d'affectation simple. L'agent peut recevoir plusieurs objets et chaque objet est en différent exemplaires.
+
+Afin de considérer les changements, on va découper cette question deux deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une second partie où l'on regardera l'approche par les graphes.
+
+\subsubsection{Approche par programmation linéaire}
+
+D'abord on va considérer les modifications à faire par rapport au programme $\mathcal{P}_0$. Ces modifications se réperctueront sur les deux autres approches. Ensuite on regardera les modifications à faire pour l'approche égalitariste et l'approche par regret.
+
+\paragraph{Maximiser la moyenne des satisfactions : }
+
+Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\} \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, c'est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet éxiste en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
+
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{x_{i,j}}{\mathbb{N}}{1 \leq i,j \leq n}{Vaut $n$ si l'agent $a_i$ reçoit $n$ fois le bien $b_j$}
+\end{variables}
+
+\begin{fonctionobj}
+
+\fobj{\boldmax \ \frac{1}{n}\ \sum_{\substack{1\leq i,j \leq n,m}} u_{i,j}x_{i,j}}
+{avec $u_{i,j}$ les coefficients d'utilités du bien $i$ pour l'agent $j$}
+\end{fonctionobj}
+
+\begin{contraintes}
+   \constraint{\sum_{i=1}^n x_{i,j} \leq \beta_j}{ 1\leq j\leq m}{$\beta_j$ agent par bien}
+   \constraint{\sum_{j=1}^m x_{i,j} \leq \alpha_i}{ 1\leq i\leq n}{$\alpha_i$ bien par agent}
+\end{contraintes}
+
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{P'}_0$}
+
+\paragraph{Approche égalitariste : } Dans l'approche égalitariste, les modifications faites précédement ne changent pas. De plus, la notion de satisfaction ne change pas. Par conséquent le programme $\mathcal{P}_1$ se généralise simplement en appliquant les modifications précédentes.
+
+\paragraph{Approche par regret : } cette approche se généralise très bien à une petite différence prêt. $r_i(x)$ est définit en utilisant $z_i^*$. Seulement la définition de $z_i^*$ s'applique seulement si l'agent choisit un seul objet. Il faut donc donner une nouvelle définition de $z_i^*$. Moralement $z_i^*$ est un majorant de la satisfaction maximale que peut espérer l'agent $i$. Cependant si l'agent $i$ peut recevoir $\alpha_i$ objets, alors $\alpha_i \times \boldmax \{u_{i,j} \mid j\in \{1,..., m\}$ est bien un majorant mais pas une borne supérieure. On peut donc affiner la définition de $z_i^*$ pour obtenir une borne supérieure. 
+
+Soit $\mathcal{U}_i$ le multiensemble des utilités de l'agent $i$ : 
+$$\mathcal{U}_i=(U_i,m)$$ où 
+\begin{itemize}
+\item $U_i=\{u_{i,j} \mid j \in \{1,\dots,m\}$~;
+\item $m(u_{i,j})=\beta_j$~;
+\end{itemize}
+
+Alors on peut définit $z_i^*$ comme :
+$$z_i^*=\sum_{\substack{i \in z_i^{\alpha_i}}} i$$ 
+où $z_i^{n}$ est le multiensemble définit inductivement pour tout $n\in \mathbb{N}$ : 
+\begin{align*}
+z_i^0 &= \emptyset \\
+z_i^{n+1} &= \boldmax \{u_{i,j} \mid u_{i,j} \in \mathcal{U}_i \setminus z_i^{n} \} \cup z_i^{n} 
+\end{align*} 
+\subsubsection{Approche par graphe}
 \end{document}
 
 %%% Local Variables:
