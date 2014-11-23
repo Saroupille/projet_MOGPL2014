@@ -197,9 +197,9 @@ def main(argv, current_directory):
             if v.varName!="zmin":
                 for c in constraints:
                     if m.getCoeff(c,v)!=0:
-                        print >> v.varName,v.x,m.getCoeff(c,v)
+                        answerfile.write(v.varName,v.x,m.getCoeff(c,v))
             else:
-                print >> v.varName,v.x,m.getCoeff(c,v)
+                answerfile.write(v.varName,v.x,m.getCoeff(c,v))
 
         answerfile.close()
     #TO DO : change this stuff
