@@ -192,9 +192,14 @@ def main(argv, current_directory):
         if options["write"]:
             answerfile.write("Answers for model"+options["filename"])
         
+        constraints=[m.getConstrByName("z"+str(i)) for i in range(options["size"])]
         for v in m.getVars():
-            #python2 syntax
-            print >> answerfile, v.varName, v.x, v.getAttr("Obj")
+            if v.varName!="zmin":
+                for c in constraints:
+                    if m.getCoeff(c,v)!=0:
+                        print >> v.varName,v.x,m.getCoeff(c,v)
+            else:
+                print >> v.varName,v.x,m.getCoeff(c,v)
 
         answerfile.close()
     #TO DO : change this stuff
