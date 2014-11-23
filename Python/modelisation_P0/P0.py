@@ -193,7 +193,7 @@ def main(argv, current_directory):
         
         for v in m.getVars():
             #python2 syntax
-            print >> answerfile, v.varName, v.x, v.getAttr("Obj")
+            print >> answerfile, v.varName, v.x, v.getAttr("Obj")*options["size"]
 
         answerfile.close()
     if options["printanswer"]:
