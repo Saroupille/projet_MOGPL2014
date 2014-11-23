@@ -76,14 +76,38 @@ do
 		fi
 	done < P0_${n}.sol
 
-	#echo "$(echo "$compt" | bc), $(echo "$sum" | bc)" > "${SOLUTIONS}/P0_${n}moy.tmp"
-
-	#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
 	compt=$(echo "$compt" | bc)
 	sum=$(echo "$sum" | bc)
 	moy=$(echo ${sum}/${compt} | bc)
-	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc)"
-	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc)" >> "$CSV/data.csv" 
+
+	echo "test sur l'ecrat type"
+	sumome="0"
+	ome="0"
+	while read line  
+	do   
+		if [ "${line:0:2}" = "(u" ]
+		then 
+			IFS="," 
+			read -r var1 var2  <<< "${line:2:(${#line}-3)}"
+			read -r var21 var22 <<< "${var2}"
+			echo "${var21},${var22}" >> "${SOLUTIONS}/P1_${n}.sol"
+			if [  "${var21:1:1}" = "1" ]
+			then
+				#si varrible utilisé
+				tmpo=$(echo "${var22} - ${moy}" | bc)
+				#echo $tmpo
+				tmpo=$(echo "${tmpo} * ${tmpo}" | bc )
+				sumome=$(echo "${sumome}+${tmpo}" | bc )
+			fi
+		fi
+	done < P0_${n}.sol
+
+	ome=$(echo "${sumome}/${compt}" | bc )
+	ome=$(echo "sqrt(${ome})" | bc )
+
+	#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
+	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc), ${ome}"
+	echo "P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc), ${ome}" >> "$CSV/data.csv" 
 
 	command_run_model_P1="${CC} ${MODELP1} -p -n ${n} -M ${max_M} > P1_${n}.sol"
 	eval "${command_run_model_P1}"
@@ -159,5 +183,8 @@ do
 
 	
 done
+
+	rm *.sol
+
 echo "fin"
 
