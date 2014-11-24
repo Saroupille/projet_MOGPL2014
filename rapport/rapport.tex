@@ -132,10 +132,12 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
+\newpage
 
 \section{Première modélisation du problème}
 \subsection{Question 1}
-
+La définition du programme $\mathcal{P}_0$ est donné dans l'encadré ci-dessous :
 \begin{mdframed}[style=MyFrame]
 
 
@@ -158,7 +160,7 @@
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_0$}
 
 \subsection{Question 2}
-Vous trouverez le code \textit{Python} du modèle \textit{PO}  dans le répertoire \textit{Python/modelisation\_P0}. 
+Vous trouverez le code \textit{Python} du modèle $\mathcal{P}_0$  dans le répertoire \textit{Python/modelisation\_P0}. 
 L'implémentation du modèle et la génération des tests se fait dans le fichier \textbf{P0.py}. Pour connaître les options possibles du programme, veuillez lancer la commande
 
 %TO DO : faire un meilleur rendu
@@ -171,52 +173,62 @@ En particulier pour lancer le programme avec comme taille $n=100$ et $M=1000$ on
 gurobi.sh P0.py -n 100 -M 1000
 \end{lstlisting}
 
-Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire la solution dans un fichier, alors le programme va créer respectivement deux sous-dossiers\footnote{à partir du dossier courant} \textit{modele} et \textit{solutions} qui contiendra ces fichiers.
+Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire la solution dans un fichier, alors le programme va créer respectivement deux sous-dossiers\footnote{à partir du dossier courant} \textit{modele} et \textit{solutions} qui contiendra ces fichiers. Ces remarques s'appliquent aussi bien pour les autres implémentations demandées par le projet.
 
 \subsection{Question 3}
 
-Nous avons automatisé la création des tableaux par un script \textit{bash} que vous trouverez dans le répertoire \textit{Python/modelisation\_P0/stats}. Ce programme va générer des fichiers \textit{csv} qui pourront ensuite être importés dans un fichier \LaTeX en utilisant le package \textit{csvsimple}. Voici donc les résultats trouvés :
+Nous avons automatisé la création des tableaux par un script \textit{bash} que vous trouverez dans le répertoire \textit{Python/stats/question\_3}. Ce programme va générer des fichiers \textit{csv} qui pourront ensuite être importés dans un fichier \LaTeX en utilisant le package \textit{csvsimple}. Voici donc les résultats trouvés :
 
-\begin{table}
+\begin{table}[h]
 \csvautotabular{csv/data_10.csv}
 \caption{Résultats lorsque $M=10$}
 \end{table}
 
-\begin{table}
+\begin{table}[h]
 \csvautotabular{csv/data_100.csv}
 \caption{Résultats lorsque $M=100$}
 \end{table}
 
-\begin{table}
+\begin{table}[h]
 \csvautotabular{csv/data_1000.csv}
 \caption{Résultats lorsque $M=1000$}
 \end{table}
 \section{Approche égalitariste}
 \subsection{Question 4}
-\paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 
 
-Soit $n$ le nombre d'agents ainsi que le nombre de bien à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
+Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version de python a utiliser. Le projet à donc été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. D'un autre côté, la librairie \textbf{pygraph} étant compatible avec python \textbf{3.4}, elle posait problème si on voulait utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant l'implémentation souffre de deux problèmes :
+\begin{itemize}
+\item Les capacités utilisent directement les coefficients~;
+\item L'algorithme est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
+\end{itemize}
+
+L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/modelisation\_graph/approche\_egalitariste.py}\footnote{Vous pouvez utiliser l'option -h pour savoir quelles options utiliser}. Dans la suite nous allons donc décrire le graphe, décrire l'algorithme et donner une justification succinte de la correction de l'algorithme.
+
+\subsubsection{Description du graphe : } 
+
+Soit $n$ le nombre d'agents ainsi que le nombre de biens à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
 On fait l'hypothèse que les coefficient de la mtrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
 On construit le graphe orienté suivant :
 $G=(V,E)$ où 
 \begin{itemize}
-\item $V=\{s,u_1,_u2,\dots, u_n, b_1,b_2,\dots, b_n,p\}$
+\item $V=\{s,a_0,a_1,\dots, u_{n-1}, o_0,o_1,\dots, o_{n-1},t\}$
 \item $\forall i,j \in \{1,\dots, n\} $
   \begin{itemize}
-  \item $(u_i,b_j)\in E $
-  \item $(s,u_i)\in E$
-  \item $(b_j,p) \in E$
+  \item $(a_i,o_j)\in E $
+  \item $(s,a_i)\in E$
+  \item $(o_j,t) \in E$
   \end{itemize}
 \end{itemize}  
 
 Il reste à décrire les capacités sur chaque arc. 
-\begin{itemize}
-\item  $\forall i,j \in \{1, \dots, n\} c(u_i,b_j)=u_{i,j}-\lambda$
-\item $\forall i \in \{1, \dots, n\},\ c(s,u_i)=\min_{\substack{j}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
-\item $\forall j \in \{1, \dots, n\},\ c(b_j,p)=\min_{\substack{i}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
-\end{itemize}
+\begin{align*}
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
+\forall i \in \{1, \dots, n\},\ c(s,a_i)&=1\\
+\forall j \in \{1, \dots, n\},\ c(o_j,t)&=1\\
+\end{align*}
 
-\paragraph{Justification de la construction du graphe : }
+\subsubsection{Descrption de l'algorithme : }
 
 \subsection{Question 5}
 On formule le programme linéaire suivant :
@@ -244,18 +256,22 @@ On formule le programme linéaire suivant :
 
 \subsection{Question 6}
 \subsection{Question 7}
+
+D'après le tableau \ref{cool}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
+
+
 \begin{table}
 \csvautotabular {csv/res_5.csv}
 \caption{comparatif du modèle max et maxmin pour n=5  }
 \csvautotabular {csv/res_10.csv}
 \caption{comparatif du modèle max et maxmin pour n=10 }
+\label{cool}
 \end{table}
 
-Nous pouvons remarquer que chercher à maximiser la satisfaction de l'agent le moins satisfait entraine une diminution de la satisfaction moyenne des agents mais cela entrainera également la diminution de l'écart entre l'agent le moins satisfait et l'agent le plus satisfait, ainsi que l'écart type. Il y a moins donc moins de différence de satisfaction entre les agents.\\
-L'approche maxmin sera donc plus équitable que celle de la maximisation simple, mais entrainera un satisfaction globalement moins grande pour les agents.
 
 \subsection{Question 8}
 
+Nous proposons la modélisation suivante pour $\mathcal{P}_2$ :
 \subsubsection{Modélisation de $\mathcal{P}_2$}
 \begin{mdframed}[style=MyFrame]
 
@@ -280,8 +296,8 @@ L'approche maxmin sera donc plus équitable que celle de la maximisation simple,
 
 \subsubsection{Comparaison de $\mathcal{P}_1$ avec $\mathcal{P}_2$}
 
-Soit le problème suivant :
-\begin{quotation}
+Afin de comparer les programmes $\mathcal{P}_1$ et $\mathcal{P}_2$, on se propose de modéliser le problème suivant :
+\begin{quote}
 L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne et avec Debain d'installé. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
 \begin{itemize}
 \item Mr Michu souhaite un ordinateur pour faire de la bureautique. Il n'a pas de préférence personnel.
@@ -292,7 +308,7 @@ La tâche de l'association ASCII est de distribuer les ordinateurs afin de satis
 
 L'association a définit que l'utilité de Mr Michu pour les des deux ordinateurs est $2$ puisque ce dernier n'a pas de préférence.
 Par contre, pour Mr Zuckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
-\end{quotation}
+\end{quote}
 
 On peut évidemment modéliser ce problème comme un problème d'affectation. On obtient donc $4$ variables à savoir :
 \begin{itemize}
@@ -349,11 +365,9 @@ Les remarques qu'on peut en tirer c'est que maximiser seulement la satisfaction 
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_3$}
 
 \subsection{Question 10}
-En fait on peut voir l'approche égalitariste comme étend un problème \textit{dual} à l'approche égalitariste. En particulier, l'algorithme proposée à la question $4$ sera similaire à celui-ci.
+L'approche égalitariste et l'approche par regret sont vraiment proches. En particulier, la construction du graphe sera équivalente. Ce qui va changer sera l'algorithme afin de minimiser le regret.
 
-Dans un premier temps, on s'intéresse au problème où les regrets de chaque agent sont plus petit que $\mu$ avec $\mu \in [0,M]$. De façon analogue, ce problème peut se traduire en un problème de flot maximum comme à la question $4$.
-
-L'algorithme consiste cette fois à prendre $\mu=M$ et de réduire succéssivement $\mu$ pour trouver la valeur minimale.
+\subsubsection{Description de l'algorithme :}
 
 
 \subsection{Question 11}
@@ -413,7 +427,40 @@ où $z_i^{n}$ est le multiensemble définit inductivement pour tout $n\in \mathb
 z_i^0 &= \emptyset \\
 z_i^{n+1} &= \boldmax \{u_{i,j} \mid u_{i,j} \in \mathcal{U}_i \setminus z_i^{n} \} \cup z_i^{n} 
 \end{align*} 
+
+La définition de $z_i^*$ donne directement un algorithme pour le calculer. Par conséquent, il suffit de reprendre la modélisation $\mathcal{P}_3$ en utilisant la nouvelle définition de $z_^*$.
+
 \subsubsection{Approche par graphe}
+
+\paragraph{Approche égalitariste :}
+
+\paragraph{Approche par regret : }
+
+\section{Annexe}
+
+\paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 
+
+Soit $n$ le nombre d'agents ainsi que le nombre de bien à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
+On fait l'hypothèse que les coefficient de la mtrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
+On construit le graphe orienté suivant :
+$G=(V,E)$ où 
+\begin{itemize}
+\item $V=\{s,u_1,_u2,\dots, u_n, b_1,b_2,\dots, b_n,p\}$
+\item $\forall i,j \in \{1,\dots, n\} $
+  \begin{itemize}
+  \item $(u_i,b_j)\in E $
+  \item $(s,u_i)\in E$
+  \item $(b_j,p) \in E$
+  \end{itemize}
+\end{itemize}  
+
+Il reste à décrire les capacités sur chaque arc. 
+\begin{itemize}
+\item  $\forall i,j \in \{1, \dots, n\} c(u_i,b_j)=u_{i,j}-\lambda$
+\item $\forall i \in \{1, \dots, n\},\ c(s,u_i)=\min_{\substack{j}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
+\item $\forall j \in \{1, \dots, n\},\ c(b_j,p)=\min_{\substack{i}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
+\end{itemize}
+
 \end{document}
 
 %%% Local Variables:

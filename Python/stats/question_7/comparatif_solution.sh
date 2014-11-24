@@ -42,7 +42,7 @@ do
 	ecartGlobal="0"
 
 	#echo "compute the models when n=${n}"
-	echo "Iteration, Model, valeur n, moyenne, val max, val min, difference max-min, ecrat type" >> "$CSV/data_${n}.csv"
+	echo "Iteration, Model, valeur n, moyenne, val max, val min, difference max-min, ecart type" >> "$CSV/data_${n}.csv"
 	for ((i=0; i<${nb_test}; i++))
 	do
 		sum="0"

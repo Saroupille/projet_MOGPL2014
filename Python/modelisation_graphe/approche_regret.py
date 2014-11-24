@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from math import isnan, isinf
 from pygraph.classes.digraph import digraph
 from pygraph.algorithms.minmax import maximum_flow
-from functools import reduce
 import sys, subprocess
 sys.path.insert(0,'../utils')
 from command_line import *
 from graph_utils import *
 from debug_utils import *
 
-
-
+#create the model from P0
 def createModel(options):
     #clean main
     model_options=["../modelisation_P0/P0.py", "--notsolve","-w","model"]
@@ -28,7 +25,7 @@ def createModel(options):
 
 #parse the model generated to find the capacities for the graph
 #the capacities are the coefficients of the objective function
-def getCoef():
+def getCoef(size):
     f=open("models/model.lp", "r")
     f.readline() #useless line
     obj_func=list()
@@ -42,7 +39,8 @@ def getCoef():
     coef=list()
     for x in obj_func:
         try:
-            coef.append(10*float(x))
+            #to compute the average, coef are divsed by size in P0
+            coef.append(size*float(x))
         except:
             pass
 
@@ -91,25 +89,26 @@ def main(argv, current_directory):
     options=parse_command_line(argv)
     size=options['size']
     createModel(options)
-    coef=getCoef()
+    coef=getCoef(size)
     g=createGraph(size)
     #mu is the thresold
     mu=options['value_max']
     regret_min=mu
-    valid=True
-    #caps=getCapacity(size,coef,mu)
-    #(flow,cut)=maximum_flow(g,"s","t",caps)
-    #mu=regret_max(size,coef,flow)
-    #valid=isValid(size,flow)
-    
-    while valid:
+    (borne_sup,borne_inf)=(mu,0)
+    count=0
+    iteration_number=2*log2(size*size)+1
+    while count<iteration_number:
         regret_min=mu
-        print("regret_min :", mu)
+        #print("regret_min :", mu)
         caps=getCapacity(size,coef,mu)
         (flow,cut)=maximum_flow(g,"s","t",caps)
-        valid=isValid(size,flow)
-        if valid:
-            mu=regret_max(size,coef,flow)
+        if isValid(size,flow):
+            borne_sup=mu
+            mu=(borne_sup+borne_inf)/2.
+        else:
+            borne_inf=mu
+            mu=(borne_sup+borne_inf)/2.
+        count+=1
 
     print(regret_min)
 #Entry point of the program
