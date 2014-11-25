@@ -16,9 +16,10 @@ max_value="100"
 
 #where is the model
 MODEL="../../modelisation_P1/P1.py"
-
+MODEL_GRAPH="../../modelisation_graphe/approche_egalitariste.py"
 #executable
 CC="gurobi.sh"
+CC_GRAPH="python2.7"
 
 #repertory with the solutions 
 SOLUTIONS="solutions/"
@@ -51,52 +52,36 @@ for m in ${max_value}
 do
 	echo "start new csv file for m=${m}"
 	#header of the table
-	echo "n, temps moyen, satisfaction moyenne, satisfaction minimum, satisfaction maximum" \
-		>> csv/data_${m}.csv
+	echo "Méthode,10,50,100" \
+		>> csv/time_${m}.csv
 	#iterate over n
 	for n in ${size}
-	do	
+	do
+		global_time=0
+		global_time_graph=0
 		echo "compute the models when n=${n}"
 		#for each test case
 		for i in $(seq 1 ${test_number})
 		do
 			#echo $i
 			#command to run the model
-			command_run_model="${CC} ${MODEL} -a ${m}_${n}_${i} -n ${n} > tmp/${m}_${n}_${i}.tmp"
-			echo ${command_run_model}
+			command_run_model="{ /usr/bin/time -f "%e" ${CC} ${MODEL} -a ${m}_${n}_${i} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
+			command_run_graph="{ /usr/bin/time -f "%e" ${CC_GRAPH} ${MODEL_GRAPH} -v -M ${m} -n ${n}; } 2>&1 | tail -n 1"
 			#run the model
-			eval "${command_run_model}"
+			time=$(echo $(eval "${command_run_model}"))
+			time_graph=$(echo $(eval "${command_run_graph}"))
+			global_time=$(echo "${global_time} + ${time}" | bc -l)
+			global_time_graph=$(echo "${global_time_graph} + ${time_graph}" | bc -l)
+			#echo $global_time_graph
 			#	echo ${command_print_answers}
 		done
-		echo "end of the execution of the models"
-		#execute the commands
-		#$(${command_run_model})
-		#echo ${n}
-		#number of variables for all running
-		number_of_lines=$((n*test_number))
-		#begininng of the command to get the result
-		answers="cat solutions/${m}_${n}_{1..${test_number}}.sol | cut -d' ' -f2,3 | sort | tail -n ${number_of_lines}"
- 		echo $answers
-		echo "start processing the data"
-		echo $(eval $answers)
-
-		#the min is on the first line
-		current_min=" $(eval "${answers} | head -n 1 | cut -d' ' -f2")"
-		echo ${current_min}
-		#the max is on the last line
-		current_max=" $(eval "${answers} | tail -n 1 | cut -d' ' -f2")"
-		echo ${current_max}
-		#we use awk to compute the average
-		current_avg=" $(eval "${answers} | awk '{sum+= \$2} END { print sum/NR}'")"
-		echo ${current_avg}
-		
-		#parse the line storing the resolution time
-		times="cat tmp/${m}_${n}_{1..${test_number}}.tmp | grep 'Explore' | cut -d' ' -f8"
-		#one more time, we use awk to compute th average
-		time_avg="$(eval "${times} | awk '{sum+= \$1} END { print sum/NR}'")"
-		echo ${time_avg}
-		#Store all the data in the csv file
-		echo "${n}, ${time_avg}, ${current_avg}, ${current_min}, ${current_max}" >> csv/data_${m}.csv
-		echo "end processing data"
+		moyenne=$(echo "scale=3; ${global_time} / ${test_number}" | bc -l)
+		moyenne_graph=$(echo "scale=3; ${global_time_graph} / ${test_number}" | bc -l)
+		result=$(echo "${result},${moyenne}")
+		result_graph=$(echo "${result_graph},${moyenne_graph}")
 	done
+	result=$(echo ${result#?})
+	result_graph=$(echo ${result_graph#?})
+	echo "\$\\mathcal{P}_1\$, ${result}" >> csv/time_${m}.csv
+	echo "flot, ${result_graph}" >> csv/time_${m}.csv
 done

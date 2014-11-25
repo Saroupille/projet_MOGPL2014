@@ -1,4 +1,3 @@
-
 \documentclass[a4paper, titlepage, oneside, 12pt]{article}%      autres choix : book  report
 
 \usepackage[utf8]{inputenc}%           gestion des accents (source)
@@ -180,18 +179,24 @@ Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire
 Nous avons automatisé la création des tableaux par un script \textit{bash} que vous trouverez dans le répertoire \textit{Python/stats/question\_3}. Ce programme va générer des fichiers \textit{csv} qui pourront ensuite être importés dans un fichier \LaTeX en utilisant le package \textit{csvsimple}. Voici donc les résultats trouvés :
 
 \begin{table}[h]
-\csvautotabular{csv/data_10.csv}
+\begin{center}
+\csvautotabular{csv/question_3/data_10.csv}
 \caption{Résultats lorsque $M=10$}
+\end{center}
 \end{table}
 
 \begin{table}[h]
-\csvautotabular{csv/data_100.csv}
+\begin{center}
+\csvautotabular{csv/question_3/data_100.csv}
 \caption{Résultats lorsque $M=100$}
+\end{center}
 \end{table}
 
 \begin{table}[h]
-\csvautotabular{csv/data_1000.csv}
+\begin{center}
+\csvautotabular{csv/question_3/data_1000.csv}
 \caption{Résultats lorsque $M=1000$}
+\end{center}
 \end{table}
 \section{Approche égalitariste}
 \subsection{Question 4}
@@ -255,17 +260,30 @@ On formule le programme linéaire suivant :
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_1$}
 
 \subsection{Question 6}
+
+Vous trouverez les résultats dans le tableau \ref{question6}
+\begin{table}
+\begin{center}
+\csvautotabular{csv/question_6/time_100.csv}
+\caption{Comparaison des temps moyens (en seconde) entre les deux implémentations lorsque $M=100$}
+\label{question6}
+\end{center}
+\end{table}
+
+On remarque dans ces résultats que l'algorithme utilisant les graphs en calculant le flot maximum est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, bien que le modèle du programme linéaire de $\mathcal{P}_1$, \textit{gurobi} est implémenté en C/C++ qui est un langage beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
+
+Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite aussi de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et elle n'est pas certainement pas optimisée.
 \subsection{Question 7}
 
-D'après le tableau \ref{cool}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
+D'après le tableau \ref{question7}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
 
 
 \begin{table}
-\csvautotabular {csv/res_5.csv}
+\csvautotabular {csv/question_7/res_5.csv}
 \caption{comparatif du modèle max et maxmin pour n=5  }
-\csvautotabular {csv/res_10.csv}
+\csvautotabular {csv/question_7/res_10.csv}
 \caption{comparatif du modèle max et maxmin pour n=10 }
-\label{cool}
+\label{question7}
 \end{table}
 
 
@@ -371,7 +389,16 @@ L'approche égalitariste et l'approche par regret sont vraiment proches. En part
 
 
 \subsection{Question 11}
+Vous trouverez les résultats dans le tableau \ref{question11}
+\begin{table}
+\begin{center}
+\csvautotabular{csv/question_11/time_100.csv}
+\caption{Comparaison des temps moyens (en seconde) entre les deux implémentations lorsque $M=100$}
+\label{question11}
+\end{center}
+\end{table}
 
+Comme à la question $6$, on s'aperçoit que l'implémentation par graphe semble plus lente que celle utilisant l'algorithme du simplexe. Ici aussi, les remarques sur la performance des langages s'appliquent.
 \section{Extension à l'affectation multiple}
 
 \subsection{Question 12}
@@ -428,14 +455,36 @@ z_i^0 &= \emptyset \\
 z_i^{n+1} &= \boldmax \{u_{i,j} \mid u_{i,j} \in \mathcal{U}_i \setminus z_i^{n} \} \cup z_i^{n} 
 \end{align*} 
 
-La définition de $z_i^*$ donne directement un algorithme pour le calculer. Par conséquent, il suffit de reprendre la modélisation $\mathcal{P}_3$ en utilisant la nouvelle définition de $z_^*$.
+La définition de $z_i^*$ donne directement un algorithme pour le calculer. Par conséquent, il suffit de reprendre la modélisation $\mathcal{P}_3$ en utilisant la nouvelle définition de $z_i^*$.
 
 \subsubsection{Approche par graphe}
 
+On s'intéresse ici aux algorithmes de graphe pour le problème d'affectation multiple lorsque l'on considère les deux approches précédentes :
+\begin{itemize}
+\item l'approche égalitariste~;
+\item l'approche par regret~;
+\end{itemize}
+
 \paragraph{Approche égalitariste :}
+
+Le problème de l'affectation multiple ne change pas la topologie du graphe. Seul les capacités doivent changer. Dans le cas de l'aproche égalitariste les nouvelles capacités seront : 
+TO DO !
+\begin{align*}
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
+\forall i \in \{1, \dots, n\},\ c(s,a_i)&=\alpha_i\\
+\forall j \in \{1, \dots, n\},\ c(o_j,t)&=\beta_j\\
+\end{align*}
 
 \paragraph{Approche par regret : }
 
+TO DO !
+\begin{align*}
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
+\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
+\forall i \in \{1, \dots, n\},\ c(s,a_i)&=\alpha_i\\
+\forall j \in \{1, \dots, n\},\ c(o_j,t)&=\beta_j\\
+\end{align*}
 \section{Annexe}
 
 \paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 

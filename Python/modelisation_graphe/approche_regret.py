@@ -2,8 +2,10 @@
 
 from pygraph.classes.digraph import digraph
 from pygraph.algorithms.minmax import maximum_flow
-import sys, subprocess
-sys.path.insert(0,'../utils')
+import sys, os, subprocess
+file_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(1,file_path+'/../utils')
+
 from command_line import *
 from graph_utils import *
 from debug_utils import *
@@ -11,7 +13,7 @@ from debug_utils import *
 #create the model from P0
 def createModel(options):
     #clean main
-    model_options=["../modelisation_P0/P0.py", "--notsolve","-w","model"]
+    model_options=[file_path+"/../modelisation_P0/P0.py", "--notsolve","-w","model"]
     if not options["size"]:
         options["size"]=10
     if not options["value_max"]:
