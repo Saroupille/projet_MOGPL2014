@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import getopt
+import sys
 from math import isnan, isinf
 def clean_string(filename):
     return "".join([c for c in filename if c.isalpha() or c.isdigit() or c=='_']).rstrip()

@@ -50,6 +50,7 @@ def getCoef(size):
             
 #main function
 
+
 def satisfactions_max(size, coef):
     satisfactions_max=list()
     for i in range(size):
