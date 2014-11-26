@@ -40,7 +40,9 @@
 
 \usepackage{microtype}%                améliorations typographiques
 
-\usepackage{csvsimple}%                 convertir un fichier .csv en tableau
+\usepackage{csvsimple}%                convertir un fichier .csv en tableau
+
+\usepackage{adjustbox}%                centrer les tableaux
 
 \usepackage{hyperref}%                 gestion des hyperliens
 
@@ -150,7 +152,7 @@
 
 \section{Première modélisation du problème}
 \subsection{Question 1}
-La définition du programme $\mathcal{P}_0$ est donné dans l'encadré ci-dessous :
+La définition du programme linéaire $\mathcal{P}_0$ est donné dans l'encadré ci-dessous :
 \begin{mdframed}[style=MyFrame]
 
 
@@ -174,54 +176,48 @@ La définition du programme $\mathcal{P}_0$ est donné dans l'encadré ci-dessou
 
 \subsection{Question 2}
 Vous trouverez le code \textit{Python} du modèle $\mathcal{P}_0$  dans le répertoire \textit{Python/modelisation\_P0}. 
-L'implémentation du modèle et la génération des tests se fait dans le fichier \textbf{P0.py}. Pour connaître les options possibles du programme, veuillez lancer la commande
-
-%TO DO : faire un meilleur rendu
-\begin{lstlisting}[language=bash]
-gurobi.sh P0.py -h
-\end{lstlisting}
+L'implémentation du modèle et la génération des tests se fait dans le fichier \textbf{P0.py}. Le programme peut se lancer soit en utilisant la  commande \textit{Python2.7} s'il est installé ou bien en utilisant \textit{gurobi.sh}. Afin de connaître les différentes options disponibles, il est possible d'utiliser l'option \textbf{-h}.
 
 En particulier pour lancer le programme avec comme taille $n=100$ et $M=1000$ on utilisera la commande suivante :
 \begin{lstlisting}[language=bash]
 gurobi.sh P0.py -n 100 -M 1000
 \end{lstlisting}
 
-Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire la solution dans un fichier, alors le programme va créer respectivement deux sous-dossiers\footnote{à partir du dossier courant} \textit{modele} et \textit{solutions} qui contiendra ces fichiers. Ces remarques s'appliquent aussi bien pour les autres implémentations demandées par le projet.
+Si vous choisissez d'utiliser les options pour enregistrer le modèle et écrire la solution dans un fichier, alors le programme va créer respectivement deux sous-dossiers\footnote{à partir du dossier courant} \textit{modele} et \textit{solutions} qui contiendra ces fichiers. Ces remarques s'appliquent aussi bien pour les autres implémentations demandées par le projet\footnote{A part les modélisations utilisant pygraph où il faut utiliser la commande \textit{python2.7}}.
 
 \subsection{Question 3}
 
 Nous avons automatisé la création des tableaux par un script \textit{bash} que vous trouverez dans le répertoire \textit{Python/stats/question\_3}. Ce programme va générer des fichiers \textit{csv} qui pourront ensuite être importés dans un fichier \LaTeX en utilisant le package \textit{csvsimple}. Voici donc les résultats trouvés :
 
+%\begin{adjustbox}{center}
+
 \begin{table}[h]
-\begin{center}
+\centerline{
 \csvautotabular{csv/question_3/data_10.csv}
+}
 \caption{Résultats lorsque $M=10$}
-\end{center}
-\end{table}
-
-\begin{table}[h]
-\begin{center}
+\centerline{
 \csvautotabular{csv/question_3/data_100.csv}
+}
 \caption{Résultats lorsque $M=100$}
-\end{center}
+\centerline{
+\csvautotabular{csv/question_3/data_1000.csv}
+}
+\caption{Résultats lorsque $M=1000$}
+
 \end{table}
 
-\begin{table}[h]
-\begin{center}
-\csvautotabular{csv/question_3/data_1000.csv}
-\caption{Résultats lorsque $M=1000$}
-\end{center}
-\end{table}
+%\end{adjustbox}
 \section{Approche égalitariste}
 \subsection{Question 4}
 
-Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version de python a utiliser. Le projet à donc été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. D'un autre côté, la librairie \textbf{pygraph} étant compatible avec python \textbf{3.4}, elle posait problème si on voulait utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant l'implémentation souffre de deux problèmes :
+Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version spécifique de Python a utiliser. Le projet à donc d'abord été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. D'un autre côté, la librairie \textbf{pygraph} posait problème avec python \textbf{3.4} si nous voulions utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant cette implémentation souffre de deux problèmes :
 \begin{itemize}
 \item Les capacités utilisent directement les coefficients~;
-\item L'algorithme est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
+\item L'algorithme n'est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
 \end{itemize}
 
-L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/modelisation\_graph/approche\_egalitariste.py}\footnote{Vous pouvez utiliser l'option -h pour savoir quelles options utiliser}. Dans la suite nous allons donc décrire le graphe, décrire l'algorithme et donner une justification succinte de la correction de l'algorithme.
+L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/modelisation\_graph/approche\_egalitariste.py}. La suite se décompose en deux parties. Dans une première partie on explicite la construction du graphe associé au problème ainsi que le dictionnaire de capacité associé au graphe. Et dans une seconde partie, nous donnons explicitement l'algorithme qui permet de résoure le problème souhaité.
 
 \subsubsection{Description du graphe : } 
 
@@ -240,29 +236,58 @@ $G=(V,E)$ où
 \end{itemize}  
 
 Il reste à décrire les capacités sur chaque arc. 
-\begin{align*}
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
-\forall i \in \{1, \dots, n\},\ c(s,a_i)&=1\\
-\forall j \in \{1, \dots, n\},\ c(o_j,t)&=1\\
-\end{align*}
+\begin{alignat*}{4}
+\forall i,j &\in \{1, \dots, n\},\ c(a_i;o_j)&=&1  \mbox{ si } u_{i,j}-\lambda>0\\
+\forall i,j &\in \{1, \dots, n\},\ c(a_i;o_j)&=&0  \mbox{ sinon}\\
+\forall i &\in \{1, \dots, n\},\ c(s;a_i)&=&1\\
+\forall j &\in \{1, \dots, n\},\ c(o_j;t)&=&1\\
+\end{alignat*}
 
-\subsubsection{Correction du graphe}
+\subsubsection{Justification de la construction du graphe}
 
-En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières. Cependant, on a la propriété suivante :
+En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières\footnote{En pratique cela n'arrive jamais si on utilise l'algorithme d'Edmonds-Karp}. Cependant on a la propriété suivante :
 
 \begin{prop}
-Si le graphe $G=(V,E)$ construit précédemment à un flot maximal, alors il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
+Le graphe $G=(V,E)$ construit précédemment à un flot maximal si et seulement si il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
+\label{prop1}
 \end{prop}
 
 \begin{proof}
-Par maximalité, tous les $c(o_j,t)$ et les $c(s,a_i)$ sont à $1$. Le seul cas intéressant se situe quand un objet est distribué entre plusieurs agents. Soit $\mathcal{F}$ un float maximum. Soit $o$ un tel objet et $a_k$ les agents assignés à $o$. Alors Par maximalité du flot on a $\sum_{\substack{k\in K}} c_{\mathcal{F}}(a_k,o)=1$. On choisit alors la construction consiste à choisir un agent $k$ parmi les $a_k$ et lui assigner cet objet en mettant sa capacité dans e nouveau flot à $1$. Par construction du graphe, on peut répartir les capacités restant des arc $(a_{-k}, o)$ sur les autres objets assignés à l'agent $k$. On peut itérer ce processus jusqu'à ce que toutes les arrêtes soient des coefficients entiers.
+Le sens réciproque est évident. Il suffit de montrer le sens direct. Par la suite on fait l'hypothèse que chaque agent a reçu au moins un objet et réciproquement. Par maximalité, tous les $c(o_j,t)$ et les $c(s,a_i)$ sont à $1$. Le seul cas intéressant se situe quand un objet est distribué entre plusieurs agents. Soit $\mathcal{F}$ un float maximum. Soit $o$ un tel objet et $a_k$ les agents assignés à $o$. Alors par maximalité du flot on a $\sum_{\substack{k\in K}} c_{\mathcal{F}}(a_k,o)=1$. La construction consiste à choisir un agent $k$ parmi les $a_k$ et lui assigner cet objet en mettant sa capacité dans ce nouveau flot à $1$. Par construction du graphe, on peut répartir les capacités restant des arc $(a_{-k}; o)$ sur les autres objets assignés à l'agent $k$ (on comble les trous). On peut itérer ce processus jusqu'à ce que toutes les arrêtes soient des coefficients entiers.
 \end{proof}
 
-Cette construction ne garanti en rien la maximalité du flot vis à vis des utilités des agents. C'est justement le but de l'algorithme suivant de le faire.
+Cette construction ne garanti en rien la maximalité du flot vis à vis des utilités des agents. C'est l'algorithme décrit dans la partie suivante qui va s'en assurer.
 
 \subsubsection{Descrption de l'algorithme : }
+\begin{algorithm}
+\DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon instead
+\KwIn{$u_{i,j}$, la matrice des utilités}
+\KwOut{$z^*=\boldmax \boldmin z_i(x)$}
+$\lambda \gets 0$\;
+$b^- \gets \lambda$\;
+$b^+ \gets \boldmax \{u_{i,j} | i,j \in \{1,...n,\}\}$\;
+$G \gets G(V,E)$\;
+\While{$\lambda \neq z^*$} {
+  $C\gets get\_capacites(G,\lambda)$\;
+  $flot \gets flot(G,C)$\;
+  \uIf{$flot$ est valide} {
+    $b^- \gets \lambda $\;
+  }
+  \Else{
+    $b^+ \gets \lambda$\;
+  }
+  $\lambda \gets \frac{b^- + b^+}{2}$\;
+}
 
+\Return{$\lambda$}\;
+\caption{Trouver le lambda maximum qui minimise l'utilité de l'agent le moins satisfait}
+\label{algo:max}
+\end{algorithm}
+    
+
+On ne prouve pas la correction de l'algorithme formellement. Par construction du graphe et des capacités, on a $\forall i \in \{1,\dots, n\},\ z_i(x)>\lambda$. Donc par la proposition \ref{prop1}, si l'algorithme de flot ne trouve pas de solution, alors c'est que le $\lambda$ choisit est trop grand. Sinon, alors on peut le faire grandir. Afin d'éviter d'itérer sur toutes les arrêtes du graphes (dans le pire des cas), nous avons utilisé une recherche dichotomique.
+
+A noter que dans l'implémentation, nous avons implémenté le test d'égalité du \textbf{while} avec un compteur. Comme la recherche dichotomique met un temps logarithmique par rapport au données, on a choisit que le nombre d'itérations devrait être proportionnel à $2\log_2 size$\footnote{$size^2$ étant à peu prêt le nombre d'arrêtes du graphe}. Après quelques essais, nous avons mis comme coefficient de proportionnalité $2$.
 
 \subsection{Question 5}
 On formule le programme linéaire suivant :
@@ -299,12 +324,12 @@ Vous trouverez les résultats dans le tableau \ref{question6}
 \end{center}
 \end{table}
 
-On remarque dans ces résultats que l'algorithme utilisant les graphs en calculant le flot maximum est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, bien que le modèle du programme linéaire de $\mathcal{P}_1$, \textit{gurobi} est implémenté en C/C++ qui est un langage beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
+On remarque dans ces résultats que l'algorithme utilisant les flots est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, le modèle du programme linéaire de $\mathcal{P}_1$ est implémenté avec \textit{gurobi} qui utilise le C/C++ qui est  beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
 
-Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite aussi de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et elle n'est pas certainement pas optimisée.
+Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite donc de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et elle n'est pas certainement pas optimisée.
 \subsection{Question 7}
 
-D'après le tableau \ref{question7}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
+D'après les tableaux \ref{question7}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
 
 
 \begin{table}
@@ -318,8 +343,8 @@ D'après le tableau \ref{question7}, on peut observer que maximiser la satisfact
 
 \subsection{Question 8}
 
-Nous proposons la modélisation suivante pour $\mathcal{P}_2$ :
 \subsubsection{Modélisation de $\mathcal{P}_2$}
+Nous proposons la modélisation suivante pour $\mathcal{P}_2$ :
 \begin{mdframed}[style=MyFrame]
 
 
@@ -348,37 +373,37 @@ Afin de comparer les programmes $\mathcal{P}_1$ et $\mathcal{P}_2$, on se propos
 L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne et avec Debain d'installé. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
 \begin{itemize}
 \item Mr Michu souhaite un ordinateur pour faire de la bureautique. Il n'a pas de préférence personnel.
-\item Mr Zuckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
+\item Mr Suckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
 \end{itemize}
 
-La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de MR. Zuckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
+La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de MR. Suckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
 
 L'association a définit que l'utilité de Mr Michu pour les des deux ordinateurs est $2$ puisque ce dernier n'a pas de préférence.
-Par contre, pour Mr Zuckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
+Par contre, pour Mr Suckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
 \end{quote}
 
 On peut évidemment modéliser ce problème comme un problème d'affectation. On obtient donc $4$ variables à savoir :
 \begin{itemize}
 \item $x_{Michu, Mac}$~;
 \item $x_{Michu, PC}$~;
-\item $x_{Zuckerberg, Mac}$~;
-\item $x_{Zuckerberg, Mac}$~;
+\item $x_{Suckerberg, Mac}$~;
+\item $x_{Suckerberg, Mac}$~;
 \end{itemize}
 
 Leurs coefficients dans la fonction objectif sont donnés directement dans le problème. Par le programme $\mathcal{P}_1$, il y a deux solutions possibles : 
 \begin{enumerate}
-\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(1,0,0,1)~;
-\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(0,1,1,0)~;
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Suckerberg, Mac},x_{Suckerberg, PC})$=(1,0,0,1)~;
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Suckerberg, Mac},x_{Suckerberg, PC})$=(0,1,1,0)~;
 \end{enumerate}
 
-En effet, dans la deux cas, la satisfaction associée à Mr Michu est de $2$ et la satisfaction de Mr Zuckerberg est plus  grande.
+En effet, dans la deux cas, la satisfaction associée à Mr Michu est de $2$ et la satisfaction de Mr Suckerberg est plus  grande.
 
 A l'inverse, par le programme $\mathcal{P}_2$, il y a qu'une solution possible :
 \begin{itemize}
-\item $(x_{Michu, Mac},x_{Michu, PC},x_{Zuckerberg, Mac},x_{Zuckerberg, PC})$=(1,0,0,1)~;
+\item $(x_{Michu, Mac},x_{Michu, PC},x_{Suckerberg, Mac},x_{Suckerberg, PC})$=(1,0,0,1)~;
 \end{itemize}
 
-En effet, la satisfaction de Mr Zuckerberg est plus grande dans la solution $1$ que dans la solution $2$. Cela entraîne donc que la fonction objectif est plus grande dans la solution $1$ que dans la solution $2$ car la satisfaction de Mr Michu n'a pas changé.
+En effet, la satisfaction de Mr Suckerberg est plus grande dans la solution $1$ que dans la solution $2$. Cela entraîne donc que la fonction objectif est plus grande dans la solution $1$ que dans la solution $2$ car la satisfaction de Mr Michu n'a pas changé.
 
 On vient donc de trouver deux solutions différentes tel qu'avec le programme $\mathcal{P}_1$ la satisfaction de Mr Suckerberg soit strictement plus petit que dans la solution du programme $\mathcal{P}_2$ tandis que celle de Mr Michu n'a pas changé.
 
@@ -412,14 +437,26 @@ Les remarques qu'on peut en tirer c'est que maximiser seulement la satisfaction 
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_3$}
 
 \subsection{Question 10}
-L'approche égalitariste et l'approche par regret sont vraiment proches. En particulier, la construction du graphe sera équivalente. Ce qui va changer sera l'algorithme afin de minimiser le regret.
+L'algorithme utilisant les flots afin de procéder à l'approche égalitariste et l'approche par regret sont vraiment proches. En particulier, la construction du graphe sera équivalente. En particulier il y a deux changements notoires :
+\begin{itemize}
+\item les capacités (décrites ci-dessous)~;
+\item la recherche dichotomique se fait dans l'autre sens.
+\end{itemize}
+
+Les deux algorithmes étant similaire, nous n'explicitons pas le nouvel algorithme. Nous donnons juste le calcul des capacités : 
+\begin{align*}
+\forall i,j \in \{1, \dots, n\} c(a_i;o_j)&=1 \mbox{ si } z_i(x)^*-u_{i,j}<\lambda\\
+\forall i,j \in \{1, \dots, n\} c(a_i;o_j)&=0 \mbox{ sinon}\\
+\forall i \in \{1, \dots, n\},\ c(s;a_i)&=1\\
+\forall j \in \{1, \dots, n\},\ c(o_j;t)&=1\\
+\end{align*}
 
 \subsubsection{Description de l'algorithme :}
 
 
 \subsection{Question 11}
 Vous trouverez les résultats dans le tableau \ref{question11}
-\begin{table}
+\begin{table}[h]
 \begin{center}
 \csvautotabular{csv/question_11/time_100.csv}
 \caption{Comparaison des temps moyens (en seconde) entre les deux implémentations lorsque $M=100$}
@@ -434,7 +471,7 @@ Comme à la question $6$, on s'aperçoit que l'implémentation par graphe semble
 
 L'affectation multiple est une généralisation du problème d'affectation simple. L'agent peut recevoir plusieurs objets et chaque objet est en différent exemplaires.
 
-Afin de considérer les changements, on va découper cette question deux deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une second partie où l'on regardera l'approche par les graphes.
+Afin de considérer les changements, on va découper cette question en deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une second partie où l'on regardera l'approche par les graphes.
 
 \subsubsection{Approche par programmation linéaire}
 
@@ -442,7 +479,7 @@ D'abord on va considérer les modifications à faire par rapport au programme $\
 
 \paragraph{Maximiser la moyenne des satisfactions : }
 
-Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\} \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, c'est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet éxiste en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
+Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\},\ \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, c'est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet éxiste en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
 
 \begin{mdframed}[style=MyFrame]
 
@@ -496,24 +533,7 @@ On s'intéresse ici aux algorithmes de graphe pour le problème d'affectation mu
 
 \paragraph{Approche égalitariste :}
 
-Le problème de l'affectation multiple ne change pas la topologie du graphe. Seul les capacités doivent changer. Dans le cas de l'aproche égalitariste les nouvelles capacités seront : 
-TO DO !
-\begin{align*}
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
-\forall i \in \{1, \dots, n\},\ c(s,a_i)&=\alpha_i\\
-\forall j \in \{1, \dots, n\},\ c(o_j,t)&=\beta_j\\
-\end{align*}
-
 \paragraph{Approche par regret : }
-
-TO DO !
-\begin{align*}
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ si } c(a_i,o_j)-\lambda>0\\
-\forall i,j \in \{1, \dots, n\} c(a_i,o_j)&=1 \mbox{ sinon}\\
-\forall i \in \{1, \dots, n\},\ c(s,a_i)&=\alpha_i\\
-\forall j \in \{1, \dots, n\},\ c(o_j,t)&=\beta_j\\
-\end{align*}
 
 \section{Allocation équitable avec l'opérateur OWA}
 \subsection{Question 13}
@@ -563,34 +583,9 @@ On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin 
 
 L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfaction qui soit \textit{équitable}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement content même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfaient. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
 
-\subsection{question 14}
+\subsection{Question 14}
 
 Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ comme des \textit{méta-variables} que seul le programme $\mathcal{L}_k$ peut comprendre. Une occurence d'une variable $L_k(x)$ se traduit donc en quelque sort par une occurence du programme $\mathcal{L}_k$. Cela nous amène donc à considérer le programme linéaire $\mathcal{O}\mathcal{W}\mathcal{A}$ suivant :
-\section{Annexe}
-
-\paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 
-
-Soit $n$ le nombre d'agents ainsi que le nombre de bien à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
-On fait l'hypothèse que les coefficient de la mtrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
-On construit le graphe orienté suivant :
-$G=(V,E)$ où 
-\begin{itemize}
-\item $V=\{s,u_1,_u2,\dots, u_n, b_1,b_2,\dots, b_n,p\}$
-\item $\forall i,j \in \{1,\dots, n\} $
-  \begin{itemize}
-  \item $(u_i,b_j)\in E $
-  \item $(s,u_i)\in E$
-  \item $(b_j,p) \in E$
-  \end{itemize}
-\end{itemize}  
-
-Il reste à décrire les capacités sur chaque arc. 
-\begin{itemize}
-\item  $\forall i,j \in \{1, \dots, n\} c(u_i,b_j)=u_{i,j}-\lambda$
-\item $\forall i \in \{1, \dots, n\},\ c(s,u_i)=\min_{\substack{j}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
-\item $\forall j \in \{1, \dots, n\},\ c(b_j,p)=\min_{\substack{i}} \{c(u_i,b_j) \mid c(u_i,b_j)\geq 0\}$
-\end{itemize}
-
 \end{document}
 
 %%% Local Variables:
