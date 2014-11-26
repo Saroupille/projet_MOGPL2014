@@ -44,6 +44,7 @@
 
 \usepackage{hyperref}%                 gestion des hyperliens
 
+\usepackage[french]{algorithm2e}
 \hypersetup{pdfstartview=XYZ}%         zoom par défaut
 
 %%%%%%%%%%%%%%%%%%%%%% CONFIGURATION %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +63,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newtheorem{prop}{Proposition}
+
+\hypersetup{                    % parametrage des hyperliens
+    colorlinks=true,                % colorise les liens
+    breaklinks=true,                % permet les retours à la ligne pour les liens trop longs
+    urlcolor= red,                 % couleur des hyperliens
+    linkcolor= blue,                % couleur des liens internes aux documents (index, figures, tableaux, equations,...)
+    citecolor= green                % couleur des liens vers les references bibliographiques
+    }
 %%%%%%%%%%%%%%%%%%%%%% COMMANDES PL %%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand\boldmin{\mathop{\mathbf{min}}}
 \newcommand\boldmax{\mathop{\mathbf{max}}}
@@ -131,7 +141,11 @@
 \begin{document}
 
 \maketitle
-\tableofcontents
+{
+  \hypersetup{linkcolor=black}
+  \tableofcontents
+}
+
 \newpage
 
 \section{Première modélisation du problème}
@@ -233,7 +247,22 @@ Il reste à décrire les capacités sur chaque arc.
 \forall j \in \{1, \dots, n\},\ c(o_j,t)&=1\\
 \end{align*}
 
+\subsubsection{Correction du graphe}
+
+En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières. Cependant, on a la propriété suivante :
+
+\begin{prop}
+Si le graphe $G=(V,E)$ construit précédemment à un flot maximal, alors il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
+\end{prop}
+
+\begin{proof}
+Par maximalité, tous les $c(o_j,t)$ et les $c(s,a_i)$ sont à $1$. Le seul cas intéressant se situe quand un objet est distribué entre plusieurs agents. Soit $\mathcal{F}$ un float maximum. Soit $o$ un tel objet et $a_k$ les agents assignés à $o$. Alors Par maximalité du flot on a $\sum_{\substack{k\in K}} c_{\mathcal{F}}(a_k,o)=1$. On choisit alors la construction consiste à choisir un agent $k$ parmi les $a_k$ et lui assigner cet objet en mettant sa capacité dans e nouveau flot à $1$. Par construction du graphe, on peut répartir les capacités restant des arc $(a_{-k}, o)$ sur les autres objets assignés à l'agent $k$. On peut itérer ce processus jusqu'à ce que toutes les arrêtes soient des coefficients entiers.
+\end{proof}
+
+Cette construction ne garanti en rien la maximalité du flot vis à vis des utilités des agents. C'est justement le but de l'algorithme suivant de le faire.
+
 \subsubsection{Descrption de l'algorithme : }
+
 
 \subsection{Question 5}
 On formule le programme linéaire suivant :
@@ -485,6 +514,58 @@ TO DO !
 \forall i \in \{1, \dots, n\},\ c(s,a_i)&=\alpha_i\\
 \forall j \in \{1, \dots, n\},\ c(o_j,t)&=\beta_j\\
 \end{align*}
+
+\section{Allocation équitable avec l'opérateur OWA}
+\subsection{Question 13}
+
+Nous avons légèrement modifier $\mathcal{P}_{\mathcal{L}_k}$ afin de transformer la contrainte d'égalité en deux contraintes. On obtient alors le programme linéaire $\mathcal{D}_{\mathcal{L}_k}$ suivant :
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{d_{seuil}^+}{\mathbb{R}^+}{}{}
+\variable{d_{seuil}^-}{\mathbb{R}^+}{}{}
+\variable{d_{i}}{\mathbb{R}^+}{1\leq i \leq n}{}
+\end{variables}
+
+\begin{fonctionobj}
+\fobj{\boldmax \ k(d_{seuil}^+ -d_{seuil}^-) -\sum_{\substack{1\leq i \leq n}} d_i} {}
+\end{fonctionobj}
+
+\begin{contraintes}
+    \constraint{d_{seuil}^+-d_{seuil}^- -d_i \leq z_i(x)}{ 1\leq i\leq n}{}
+\end{contraintes}
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{D}_{\mathcal{L}_k}$}
+
+Ce qui est intéressant dans le dual c'est de remarquer que les $z_i(x)$ passent dans les contraintes. Là où dans le primal, $z_i(x)$ devaient obligatoirement être des constantes car c'était le coefficient associé à la variable $y_{i_k}$, maintenant, on peut envisager $z_i(x)$ comme étant une variable.
+
+On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin de calculer pour $k$ fixé $\mathcal{L}_k(x)$ :
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{d_{seuil}^+}{\mathbb{R}^+}{}{}
+\variable{d_{seuil}^-}{\mathbb{R}^+}{}{}
+\variable{d_{i}}{\mathbb{R}^+}{1\leq i \leq n}{}
+\variable{x_{i,j}}{\mathbb{B}}{1 \leq i,j \leq n}{Vaut $1$ si l'agent $a_i$ reçoit le bien $b_j$}
+\end{variables}
+
+\begin{fonctionobj}
+\fobj{\boldmax \ k(d_{seuil}^+ -d_{seuil}^-) -\sum_{\substack{1\leq i \leq n}} d_i} {}
+\end{fonctionobj}
+
+\begin{contraintes}
+    \constraint{\sum_{\substack{1\leq j \leq n}} u_{i,j}x_{i,j} +d_i \geq d_{seuil}^+-d_{seuil}^-}{ 1\leq i\leq n}{}
+\end{contraintes}
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{L}_k$}
+
+L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfaction qui soit \textit{équitable}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement content même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfaient. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
+
+\subsection{question 14}
+
+Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ comme des \textit{méta-variables} que seul le programme $\mathcal{L}_k$ peut comprendre. Une occurence d'une variable $L_k(x)$ se traduit donc en quelque sort par une occurence du programme $\mathcal{L}_k$. Cela nous amène donc à considérer le programme linéaire $\mathcal{O}\mathcal{W}\mathcal{A}$ suivant :
 \section{Annexe}
 
 \paragraph{Description du graphe : } On décrit dans ce paragraphe la construction du graphe lié au problème. 
