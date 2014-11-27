@@ -217,12 +217,12 @@ Avant de parler de la construction du graphe, nous mentionnons que cette questio
 \item L'algorithme n'est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
 \end{itemize}
 
-L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/modelisation\_graph/approche\_egalitariste.py}. La suite se décompose en deux parties. Dans une première partie on explicite la construction du graphe associé au problème ainsi que le dictionnaire de capacité associé au graphe. Et dans une seconde partie, nous donnons explicitement l'algorithme qui permet de résoure le problème souhaité.
+L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/modelisation\_graph/approche\_egalitariste.py}. La suite se décompose en deux parties. Dans une première partie on explicite la construction du graphe associé au problème ainsi que le dictionnaire de capacité associé au graphe. Et dans une seconde partie, nous donnons explicitement l'algorithme qui permet de résoudre le problème souhaité.
 
 \subsubsection{Description du graphe : } 
 
 Soit $n$ le nombre d'agents ainsi que le nombre de biens à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
-On fait l'hypothèse que les coefficient de la mtrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
+On fait l'hypothèse que les coefficient de la matrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
 On construit le graphe orienté suivant :
 $G=(V,E)$ où 
 \begin{itemize}
@@ -258,7 +258,7 @@ Le sens réciproque est évident. Il suffit de montrer le sens direct. Par la su
 
 Cette construction ne garanti en rien la maximalité du flot vis à vis des utilités des agents. C'est l'algorithme décrit dans la partie suivante qui va s'en assurer.
 
-\subsubsection{Descrption de l'algorithme : }
+\subsubsection{Description de l'algorithme : }
 \begin{algorithm}
 \DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon instead
 \KwIn{$u_{i,j}$, la matrice des utilités}
@@ -376,7 +376,7 @@ L'association ASCII est une association de récupération de matériel informati
 \item Mr Suckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
 \end{itemize}
 
-La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de MR. Suckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
+La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de Mr. Suckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
 
 L'association a définit que l'utilité de Mr Michu pour les des deux ordinateurs est $2$ puisque ce dernier n'a pas de préférence.
 Par contre, pour Mr Suckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
@@ -437,7 +437,7 @@ Les remarques qu'on peut en tirer c'est que maximiser seulement la satisfaction 
 \captionof{lstlisting}{Programme linéaire $\mathcal{P}_3$}
 
 \subsection{Question 10}
-L'algorithme utilisant les flots afin de procéder à l'approche égalitariste et l'approche par regret sont vraiment proches. En particulier, la construction du graphe sera équivalente. En particulier il y a deux changements notoires :
+L'algorithme utilisant les flots afin de procéder à l'approche égalitariste et l'approche par regret sont vraiment proches. En particulier, la construction du graphe sera équivalente. Avec deux changements notoires :
 \begin{itemize}
 \item les capacités (décrites ci-dessous)~;
 \item la recherche dichotomique se fait dans l'autre sens.
@@ -475,7 +475,7 @@ Afin de considérer les changements, on va découper cette question en deux part
 
 \subsubsection{Approche par programmation linéaire}
 
-D'abord on va considérer les modifications à faire par rapport au programme $\mathcal{P}_0$. Ces modifications se réperctueront sur les deux autres approches. Ensuite on regardera les modifications à faire pour l'approche égalitariste et l'approche par regret.
+D'abord on va considérer les modifications à faire par rapport au programme $\mathcal{P}_0$. Ces modifications se répercuteront sur les deux autres approches. Ensuite on regardera les modifications à faire pour l'approche égalitariste et l'approche par regret.
 
 \paragraph{Maximiser la moyenne des satisfactions : }
 
