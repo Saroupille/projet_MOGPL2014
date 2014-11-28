@@ -245,7 +245,7 @@ Il reste à décrire les capacités sur chaque arc.
 
 \subsubsection{Justification de la construction du graphe}
 
-En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières\footnote{En pratique cela n'arrive jamais si on utilise l'algorithme d'Edmonds-Karp}. Cependant on a la propriété suivante :
+En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières\footnote{En pratique cela n'arrive jamais si on utilise l'algorithme d'Edmonds-Karp}. Cependant on a la propriété suivante\footnote{Nous avons appris après coup qu'il existait le théorème des valeurs des entières qui englobait cette proposition.}:
 
 \begin{prop}
 Le graphe $G=(V,E)$ construit précédemment à un flot maximal si et seulement si il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
@@ -525,15 +525,15 @@ La définition de $z_i^*$ donne directement un algorithme pour le calculer. Par 
 
 \subsubsection{Approche par graphe}
 
-On s'intéresse ici aux algorithmes de graphe pour le problème d'affectation multiple lorsque l'on considère les deux approches précédentes :
+On s'intéresse ici aux algorithmes de graphe pour le problème d'affectation multiple lorsque l'on considère les deux approches précédentes à savoir :
 \begin{itemize}
 \item l'approche égalitariste~;
 \item l'approche par regret~;
 \end{itemize}
 
-\paragraph{Approche égalitariste :}
+Cependant nous n'avons pas trouvé de modélisation approprié pour ces deux approches. En effet, on peut avoir une bonne intuition des capacités sur les arrêtes sortantes de la source ($\alpha_i$) et les arrêtes entrantes de la cible ($\beta_j$) mais sur les capacités du sous-graphe biparti, cela devient plus compliqué. En effet, l'approche par un algorithme glouton du même type qu'à la question $4$ et $10$ demanderait d'avoir une bonne heuristique sur la suppression des arrêtes dans le graphe. En particulier dans le problème de l'affectation simple, on était capable de garantir le fait que l'arrête choisit par l'agent le moins satisfait ne serait pas choisie s'il existait une solution meilleure. Dans le cadre de l'affectation multiple, un agent va pouvoir choisir plusieurs arrêtes. Mais cette fois on ne peut plus garantir que la plus petite arrête choisi par l'agent le moins satisfait ne pourra pas être choisi dans une autre solution. Car une nouvelle  combinaison comprenant cette arrête pourrait améliorer nettement la satisfaction de l'agent.
 
-\paragraph{Approche par regret : }
+Une idée \textit{théorique} possible serait d'envisager plusieurs cas. Par exemple, de la même manière qu'on a calculer le regret maximal pour un agent, on pourrait calculer la satisfaction minimal d'un agent. Parmi les $\alpha_i$ arrêtes choisis par l'agent, on sait qu'il y en aura au moins une qui ne sera pas utilisé. Il faut donc envisager tous les cas où on supprime une arête $k\in \alpha_i$. Cela nous amène à parcourir un arbre. En pratique cette méthode ne fonctionnera pas car l'arbre est exponentiel par rapport à la taille du problème. Afin d'avoir un algorithme efficace, cela revient donc à trouver une heuristique afin de choisir quels sont les noeuds intéressant à regarder.
 
 \section{Allocation équitable avec l'opérateur OWA}
 \subsection{Question 13}
@@ -572,7 +572,7 @@ On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin 
 \end{variables}
 
 \begin{fonctionobj}
-\fobj{\boldmax \ k(d_{seuil}^+ -d_{seuil}^-) -\sum_{\substack{1\leq i \leq n}} d_i} {}
+\fobj{\boldmax \ k(d_{seuil}^+ -d_{seuil}^-) -\sum_{\substack{1\leq i \leq n}} d_i} {$f_{\mathcal{L}_k}$}
 \end{fonctionobj}
 
 \begin{contraintes}
@@ -586,6 +586,34 @@ L'intérêt de résoudre ce problème dans le contexte du partage équitable est
 \subsection{Question 14}
 
 Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ comme des \textit{méta-variables} que seul le programme $\mathcal{L}_k$ peut comprendre. Une occurence d'une variable $L_k(x)$ se traduit donc en quelque sort par une occurence du programme $\mathcal{L}_k$. Cela nous amène donc à considérer le programme linéaire $\mathcal{O}\mathcal{W}\mathcal{A}$ suivant :
+\begin{mdframed}[style=MyFrame]
+
+
+\begin{variables}
+\variable{d_{k_{seuil}^+}}{\mathbb{R}^+}{1\leq k \leq n}{}
+\variable{d_{k_{seuil}^-}}{\mathbb{R}^+}{1\leq k \leq n}{}
+\variable{d_{k_i}}{\mathbb{R}^+}{1\leq k,i \leq n}{}
+\variable{x_{i,j}}{\mathbb{B}}{1 \leq i,j \leq n}{Vaut $1$ si l'agent $a_i$ reçoit le bien $b_j$}
+\end{variables}
+
+\begin{fonctionobj}
+\fobj{\boldmax \sum_{k=1}^{n-1}(w_k - w_{k+1})f_{\mathcal{L}_k} + w_n f_{\mathcal{L}_n}}     {$f_{\mathcal{L}_k}$ définit dans $\mathcal{L}_k$}
+%\ k(d_{seuil}^+ -d_{seuil}^-) -\sum_{\substack{1\leq i \leq n}} d_i} {}
+\end{fonctionobj}
+
+\begin{contraintes}
+    \constraint{\sum_{i=1}^n x_{i,j} =1}{ 1\leq j\leq n}{$1$ agent par bien}
+    \constraint{\sum_{j=1}^n x_{i,j} =1}{ 1\leq i\leq n}{$1$ bien par agent}
+    \constraint{z_i(x) +d_{k_i} -(d_{k_{seuil}^+}-d_{k_{seuil}^-})\geq 0}{ 1\leq k,i\leq n}{}
+\end{contraintes}
+\end{mdframed}
+\captionof{lstlisting}{Programme linéaire $\mathcal{L}_k$}
+
+\subsection{Question 15}
+
+\subsection{Question 16}
+
+\subsection{Question 17}
 \end{document}
 
 %%% Local Variables:
