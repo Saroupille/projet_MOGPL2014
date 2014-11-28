@@ -211,7 +211,7 @@ Nous avons automatisé la création des tableaux par un script \textit{bash} que
 \section{Approche égalitariste}
 \subsection{Question 4}
 
-Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version spécifique de Python a utiliser. Le projet à donc d'abord été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. D'un autre côté, la librairie \textbf{pygraph} posait problème avec python \textbf{3.4} si nous voulions utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant cette implémentation souffre de deux problèmes :
+Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version spécifique de Python a utiliser. Le projet à donc d'abord été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. De plus, la librairie \textbf{pygraph} posait problème avec python \textbf{3.4} si nous voulions utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant cette implémentation souffre de deux problèmes :
 \begin{itemize}
 \item Les capacités utilisent directement les coefficients~;
 \item L'algorithme n'est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
@@ -287,7 +287,7 @@ $G \gets G(V,E)$\;
 
 On ne prouve pas la correction de l'algorithme formellement. Par construction du graphe et des capacités, on a $\forall i \in \{1,\dots, n\},\ z_i(x)>\lambda$. Donc par la proposition \ref{prop1}, si l'algorithme de flot ne trouve pas de solution, alors c'est que le $\lambda$ choisit est trop grand. Sinon, alors on peut le faire grandir. Afin d'éviter d'itérer sur toutes les arrêtes du graphes (dans le pire des cas), nous avons utilisé une recherche dichotomique.
 
-A noter que dans l'implémentation, nous avons implémenté le test d'égalité du \textbf{while} avec un compteur. Comme la recherche dichotomique met un temps logarithmique par rapport au données, on a choisit que le nombre d'itérations devrait être proportionnel à $2\log_2 size$\footnote{$size^2$ étant à peu prêt le nombre d'arrêtes du graphe}. Après quelques essais, nous avons mis comme coefficient de proportionnalité $2$.
+A noter que dans l'implémentation, nous avons implémenté le test d'égalité du \textbf{while} avec un compteur. Comme la recherche dichotomique met un temps logarithmique par rapport au données, on a choisit que le nombre d'itérations devrait être proportionnel à $2\log_2 size$\footnote{$size^2$ étant à peu prêt le nombre d'arêtes du graphe}. Après quelques essais, nous avons mis comme coefficient de proportionnalité $2$.
 
 \subsection{Question 5}
 On formule le programme linéaire suivant :
@@ -326,9 +326,9 @@ Vous trouverez les résultats dans le tableau \ref{question6}
 
 On remarque dans ces résultats que l'algorithme utilisant les flots est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, le modèle du programme linéaire de $\mathcal{P}_1$ est implémenté avec \textit{gurobi} qui utilise le C/C++ qui est  beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
 
-Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite donc de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et elle n'est pas certainement pas optimisée.
-\subsection{Question 7}
+Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite donc de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et son but premier n'est pas la performance pure, elle n'est donc pas certainement pas optimisée.
 
+\subsection{Question 7}
 D'après les tableaux \ref{question7}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
 
 
@@ -370,7 +370,7 @@ Nous proposons la modélisation suivante pour $\mathcal{P}_2$ :
 
 Afin de comparer les programmes $\mathcal{P}_1$ et $\mathcal{P}_2$, on se propose de modéliser le problème suivant :
 \begin{quote}
-L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne et avec Debain d'installé. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
+L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne sous Debain. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
 \begin{itemize}
 \item Mr Michu souhaite un ordinateur pour faire de la bureautique. Il n'a pas de préférence personnel.
 \item Mr Suckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
@@ -471,7 +471,7 @@ Comme à la question $6$, on s'aperçoit que l'implémentation par graphe semble
 
 L'affectation multiple est une généralisation du problème d'affectation simple. L'agent peut recevoir plusieurs objets et chaque objet est en différent exemplaires.
 
-Afin de considérer les changements, on va découper cette question en deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une second partie où l'on regardera l'approche par les graphes.
+Afin de considérer les changements, on va découper cette question en deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une seconde partie où l'on regardera l'approche par les graphes.
 
 \subsubsection{Approche par programmation linéaire}
 
@@ -479,7 +479,7 @@ D'abord on va considérer les modifications à faire par rapport au programme $\
 
 \paragraph{Maximiser la moyenne des satisfactions : }
 
-Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\},\ \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, c'est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet éxiste en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
+Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\},\ \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet existe en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
 
 \begin{mdframed}[style=MyFrame]
 
@@ -502,7 +502,7 @@ Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le pre
 \end{mdframed}
 \captionof{lstlisting}{Programme linéaire $\mathcal{P'}_0$}
 
-\paragraph{Approche égalitariste : } Dans l'approche égalitariste, les modifications faites précédement ne changent pas. De plus, la notion de satisfaction ne change pas. Par conséquent le programme $\mathcal{P}_1$ se généralise simplement en appliquant les modifications précédentes.
+\paragraph{Approche égalitariste : } Dans l'approche égalitariste, les modifications faites précédemment ne changent pas. De plus, la notion de satisfaction ne change pas. Par conséquent le programme $\mathcal{P}_1$ se généralise simplement en appliquant les modifications précédentes.
 
 \paragraph{Approche par regret : } cette approche se généralise très bien à une petite différence prêt. $r_i(x)$ est définit en utilisant $z_i^*$. Seulement la définition de $z_i^*$ s'applique seulement si l'agent choisit un seul objet. Il faut donc donner une nouvelle définition de $z_i^*$. Moralement $z_i^*$ est un majorant de la satisfaction maximale que peut espérer l'agent $i$. Cependant si l'agent $i$ peut recevoir $\alpha_i$ objets, alors $\alpha_i \times \boldmax \{u_{i,j} \mid j\in \{1,..., m\}$ est bien un majorant mais pas une borne supérieure. On peut donc affiner la définition de $z_i^*$ pour obtenir une borne supérieure. 
 
@@ -558,7 +558,7 @@ Nous avons légèrement modifier $\mathcal{P}_{\mathcal{L}_k}$ afin de transform
 \end{mdframed}
 \captionof{lstlisting}{Programme linéaire $\mathcal{D}_{\mathcal{L}_k}$}
 
-Ce qui est intéressant dans le dual c'est de remarquer que les $z_i(x)$ passent dans les contraintes. Là où dans le primal, $z_i(x)$ devaient obligatoirement être des constantes car c'était le coefficient associé à la variable $y_{i_k}$, maintenant, on peut envisager $z_i(x)$ comme étant une variable.
+Ce qui est intéressant dans le dual c'est de remarquer que les $z_i(x)$ passent dans les contraintes. Là où dans le primal, $z_i(x)$ devaient obligatoirement être des constantes car c'était le coefficient associé à la variable $y_{i_k}$, alors que maintenant, on peut envisager $z_i(x)$ comme étant une variable.
 
 On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin de calculer pour $k$ fixé $\mathcal{L}_k(x)$ :
 \begin{mdframed}[style=MyFrame]
@@ -581,11 +581,11 @@ On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin 
 \end{mdframed}
 \captionof{lstlisting}{Programme linéaire $\mathcal{L}_k$}
 
-L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfaction qui soit \textit{équitable}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement content même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfaient. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
+L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfaction qui soit \textit{équitable}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement content même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfait. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
 
 \subsection{Question 14}
 
-Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ comme des \textit{méta-variables} que seul le programme $\mathcal{L}_k$ peut comprendre. Une occurence d'une variable $L_k(x)$ se traduit donc en quelque sort par une occurence du programme $\mathcal{L}_k$. Cela nous amène donc à considérer le programme linéaire $\mathcal{O}\mathcal{W}\mathcal{A}$ suivant :
+Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ comme des \textit{méta-variables} que seul le programme $\mathcal{L}_k$ peut comprendre. Une occurrence d'une variable $L_k(x)$ se traduit donc en quelque sorte par une occurrence du programme $\mathcal{L}_k$. Cela nous amène donc à considérer le programme linéaire $\mathcal{O}\mathcal{W}\mathcal{A}$ suivant :
 \end{document}
 
 %%% Local Variables:
