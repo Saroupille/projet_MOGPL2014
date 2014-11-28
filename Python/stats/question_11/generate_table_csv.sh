@@ -16,6 +16,7 @@ max_value="100"
 
 #where is the model
 MODEL="../../modelisation_P3/P3.py"
+
 MODEL_GRAPH="../../modelisation_graphe/approche_regret.py"
 #executable
 CC="gurobi.sh"
@@ -52,8 +53,7 @@ for m in ${max_value}
 do
 	echo "start new csv file for m=${m}"
 	#header of the table
-	echo "Méthode,10,50,100" \
-		>> csv/time_${m}.csv
+	echo "Méthode,10,50,100" >> csv/time_${m}.csv
 	#iterate over n
 	for n in ${size}
 	do
@@ -63,7 +63,6 @@ do
 		#for each test case
 		for i in $(seq 1 ${test_number})
 		do
-			#echo $i
 			#command to run the model
 			command_run_model="{ /usr/bin/time -f "%e" ${CC} ${MODEL} -a ${m}_${n}_${i} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
 			command_run_graph="{ /usr/bin/time -f "%e" ${CC_GRAPH} ${MODEL_GRAPH} -v -M ${m} -n ${n}; } 2>&1 | tail -n 1"
@@ -72,8 +71,6 @@ do
 			time_graph=$(echo $(eval "${command_run_graph}"))
 			global_time=$(echo "${global_time} + ${time}" | bc -l)
 			global_time_graph=$(echo "${global_time_graph} + ${time_graph}" | bc -l)
-			#echo $global_time_graph
-			#	echo ${command_print_answers}
 		done
 		moyenne=$(echo "scale=3; ${global_time} / ${test_number}" | bc -l)
 		moyenne_graph=$(echo "scale=3; ${global_time_graph} / ${test_number}" | bc -l)
