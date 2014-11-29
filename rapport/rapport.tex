@@ -317,11 +317,11 @@ On formule le programme linéaire suivant :
 
 Vous trouverez les résultats dans le tableau \ref{question6}
 \begin{table}
-\begin{center}
+\centerline{
 \csvautotabular{csv/question_6/time_100.csv}
+}
 \caption{Comparaison des temps moyens (en seconde) entre les deux implémentations lorsque $M=100$}
 \label{question6}
-\end{center}
 \end{table}
 
 On remarque dans ces résultats que l'algorithme utilisant les flots est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, le modèle du programme linéaire de $\mathcal{P}_1$ est implémenté avec \textit{gurobi} qui utilise le C/C++ qui est  beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
@@ -333,9 +333,13 @@ D'après les tableaux \ref{question7}, on peut observer que maximiser la satisfa
 
 
 \begin{table}
+\centerline{
 \csvautotabular {csv/question_7/res_5.csv}
+}
 \caption{comparatif du modèle max et maxmin pour n=5  }
+\centerline{
 \csvautotabular {csv/question_7/res_10.csv}
+}
 \caption{comparatif du modèle max et maxmin pour n=10 }
 \label{question7}
 \end{table}
@@ -457,11 +461,12 @@ Les deux algorithmes étant similaire, nous n'explicitons pas le nouvel algorith
 \subsection{Question 11}
 Vous trouverez les résultats dans le tableau \ref{question11}
 \begin{table}[h]
-\begin{center}
+\centerline{
 \csvautotabular{csv/question_11/time_100.csv}
+}
 \caption{Comparaison des temps moyens (en seconde) entre les deux implémentations lorsque $M=100$}
 \label{question11}
-\end{center}
+
 \end{table}
 
 Comme à la question $6$, on s'aperçoit que l'implémentation par graphe semble plus lente que celle utilisant l'algorithme du simplexe. Ici aussi, les remarques sur la performance des langages s'appliquent.
@@ -612,9 +617,63 @@ Afin de maximiser l'opérateur $\mathit{OWA}$ nous considérons les $L_k(x)$ com
 
 \subsection{Question 15}
 
-\subsection{Question 16}
+\paragraph{Remarque :} dans l'implémentation du modèle, la suite $(w_i)$ est fixe et est définit comme $\forall i \in \{1,...,n\},\ w_i=n-i+1$.
 
-\subsection{Question 17}
+Vous trouverez dans le tableau \ref{question15} les temps moyens pour $n=10,50,100$. Nous faisons tout de même une remarque en remarquant que la disparité des temps pour $n=100$ est assez impressionante. Et ce n'est pas tout. Au minimum le programme prenait 200 secondes, mais pour deux runs, il a prit près de $4000$ secondes. Cela peut peut-être venir de l'ordinateur sur lequel nous avons fait tourné les tests.
+\begin{table}
+\centerline{
+\csvautotabular {csv/question_15/data_100.csv}
+}
+\caption{Temps et valeur moyenne pour $M=100$ avec l'opérateur OWA}
+\label{question15}
+\end{table}
+
+\subsection{Question 16}
+Comment on peut le constater sur les tableaux \ref{question16}, la modélisation avec l'opérateur OWA tend à améliorer la moyenne au dépit de l'écart type. On a donc comme pour la première approche une disparité un peu plus grande des satisfactions. Les résultats obtenus étant similaires à ceux de la question $7$, ce qui pourrait être intéressant, serait de faire la comparaison avec le programme $\mathcal{P}_0$.
+\begin{table}
+\centerline{
+\csvautotabular {csv/question_16/res_5.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=5  }
+\centerline{
+\csvautotabular {csv/question_16/res_10.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=10 }
+\centerline{
+\csvautotabular {csv/question_16/res_15.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=15 }
+\centerline{
+\csvautotabular {csv/question_16/res_20.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=20 }
+
+\label{question16}
+\end{table}
+
+\subsection{Comparaison du modèle $\mathcal{OWA}$ avec $\mathcal{P}_0$}
+
+Cette fois on remarque que pour l'opérateur $\mathcal{OWA}$, la moyenne est un tout petit peu plus faible afin de favoriser l'écart-type par rapport $\mathcal{P}_0$. C'est pas étonnant que la moyenne soit plus basse pour le modèle $\mathcal{OWA}$, mais ce qui est intéressant de se rendre compte, c'est que cet opérateur favorise à la fois la moyenne et l'écart-type. C'est donc un bon compromis entre les modèles $\mathcal{P}_0$ et $\mathcal{P}_1$. Cependant, le modèle est beaucoup plus lourd à éxécuter.
+\begin{table}
+\centerline{
+\csvautotabular {csv/question_16_bis/res_5.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=5  }
+\centerline{
+\csvautotabular {csv/question_16_bis/res_10.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=10 }
+\centerline{
+\csvautotabular {csv/question_16_bis/res_15.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=15 }
+\centerline{
+\csvautotabular {csv/question_16_bis/res_20.csv}
+}
+\caption{comparatif du modèle OWA et maxmin pour n=20 }
+
+\label{question16_bis}
+\end{table}
 \end{document}
 
 %%% Local Variables:

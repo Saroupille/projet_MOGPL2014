@@ -67,6 +67,7 @@ do
 			command_run_model="{ /usr/bin/time -f "%e" ${CC} ${MODEL} -a ${m}_${n}_${i} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
 			command_run_graph="{ /usr/bin/time -f "%e" ${CC_GRAPH} ${MODEL_GRAPH} -v -M ${m} -n ${n}; } 2>&1 | tail -n 1"
 			#run the model
+			echo $command_run_model
 			time=$(echo $(eval "${command_run_model}"))
 			time_graph=$(echo $(eval "${command_run_graph}"))
 			global_time=$(echo "${global_time} + ${time}" | bc -l)
