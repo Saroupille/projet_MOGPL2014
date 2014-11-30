@@ -2,7 +2,6 @@
 
 from gurobipy import *
 from random import triangular
-#parse command line
 import sys, os, getopt
 file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1,file_path+'/../utils')
@@ -16,10 +15,10 @@ def createVariables(m, options):
         print("Add the variables to the model")
 
     
-    #the name of the variable is "x:i:j"
+    #the name of the variables are "x_i_j"
     #the variable is a binary
     #there are size*size variables    
-    return [[m.addVar(vtype=GRB.BINARY, name=":".join(["x",str(i),str(j)])) \
+    return [[m.addVar(vtype=GRB.BINARY, name="_".join(["x",str(i),str(j)])) \
              for j in range(size)] for i in range(size)]
 
 #set the objective function
@@ -88,10 +87,6 @@ def main(argv, current_directory):
     #solve the linear problem
         m.optimize()
 
-    #obj=m.getObjective()
-    #print(obj)
-    #print(m.getConstrs())
-    #print(system("pwd"))
     if options["solve"] and options["answerfile"]!=None:
 
         #check the existence of the solutions directory
@@ -111,9 +106,6 @@ def main(argv, current_directory):
     if options["printanswer"]:
         for v in m.getVars():
             print(v.varName,v.x,v.getAttr("Obj")*options["size"])
-
-    
-    #print 'Obj:', m.objVal
 
 #Entry point of the program
 if __name__ =="__main__":

@@ -6,7 +6,7 @@ Il suffit d'utiliser la commande `gurobi.sh mon_modele.py`. A noter que pour les
 
 #Génération des statistiques
 
-Pour chaque tableau du rapport, on trouvera le fichier csv correspondant dans le dossier *rapport/csv/question_\<numero\>/*. Ce fichier aura été généré par un script bash se trouvant de le répertoire *python/stat/question_\<numero\>/*.
+Pour chaque tableau du rapport, on trouvera le fichier csv correspondant dans le dossier *rapport/csv/question_\<numero\>/*. Ce fichier aura été généré par un script bash se trouvant de le répertoire *bash/question_\<numero\>/*.
 
 ##Configuration
 
