@@ -152,7 +152,7 @@
 
 \section{Première modélisation du problème}
 \subsection{Question 1}
-La définition du programme linéaire $\mathcal{P}_0$ est donné dans l'encadré ci-dessous :
+La définition du programme linéaire $\mathcal{P}_0$ est donnée dans l'encadré ci-dessous :
 \begin{mdframed}[style=MyFrame]
 
 
@@ -163,7 +163,7 @@ La définition du programme linéaire $\mathcal{P}_0$ est donné dans l'encadré
 \begin{fonctionobj}
 
 \fobj{\boldmax \ \frac{1}{n}\ \sum_{\substack{1\leq i,j \leq n}} u_{i,j}x_{i,j}}
-{avec $u_{i,j}$ les coefficients d'utilités du bien $i$ pour l'agent $j$}
+{avec $u_{i,j}$ les coefficients d'utilité du bien $i$ pour l'agent $j$}
 \end{fonctionobj}
 
 \begin{contraintes}
@@ -211,7 +211,7 @@ Nous avons automatisé la création des tableaux par un script \textit{bash} que
 \section{Approche égalitariste}
 \subsection{Question 4}
 
-Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version spécifique de Python a utiliser. Le projet à donc d'abord été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. De plus, la librairie \textbf{pygraph} posait problème avec python \textbf{3.4} si nous voulions utiliser \textit{gurobi}. Une première solution à donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant cette implémentation souffre de deux problèmes :
+Avant de parler de la construction du graphe, nous mentionnons que cette question nous a posé quelques problèmes. En effet, le sujet ne spécifiait pas une version spécifique de Python a utiliser. Le projet a donc d'abord été implémenté en utilisant la version \textbf{3.4} de Python. Seulement, il se trouve que \textit{gurobi} n'est pas compatible avec cette version. De plus, la librairie \textbf{pygraph} posait problème avec python \textbf{3.4} si nous voulions utiliser \textit{gurobi}. Une première solution a donc été d'utiliser la librairie \textit{graph\_tools}. L'implémentation se trouve dans \textit{Python/modelisation\_graph/graph\_tools.py}. Cependant cette implémentation souffre de deux problèmes :
 \begin{itemize}
 \item Les capacités utilisent directement les coefficients~;
 \item L'algorithme n'est pas au point, en particulier il n'utilise pas une recherche dichotomique~;
@@ -222,7 +222,7 @@ L'implémentation qui nous intéresse se situe à l'adresse \textit{Python/model
 \subsubsection{Description du graphe : } 
 
 Soit $n$ le nombre d'agents ainsi que le nombre de biens à répartir. Soit $u_{i,j}$ l'utilité du bien $j$ pour l'agent $i$. 
-On fait l'hypothèse que les coefficient de la matrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
+On fait l'hypothèse que les coefficients de la matrice $u_{i,j}$ soient distincts\footnote{L'hypothèse n'est pas très forte car il suffit sinon de tirer au hasard un $\varepsilon>0$ pour différencier les coefficients égaux}. 
 On construit le graphe orienté suivant :
 $G=(V,E)$ où 
 \begin{itemize}
@@ -245,18 +245,18 @@ Il reste à décrire les capacités sur chaque arc.
 
 \subsubsection{Justification de la construction du graphe}
 
-En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garanti que le flot sera composé qu'avec des capacités entières\footnote{En pratique cela n'arrive jamais si on utilise l'algorithme d'Edmonds-Karp}. Cependant on a la propriété suivante\footnote{Nous avons appris après coup qu'il existait le théorème des valeurs des entières qui englobait cette proposition.}:
+En construisant le graphe de cette façon, on remarque qu'un flot maximal ne correspond pas forcément à un problème d'affectation. En effet, rien ne garantit que le flot sera composé qu'avec des capacités entières\footnote{En pratique cela n'arrive jamais si on utilise l'algorithme d'Edmonds-Karp}. Cependant on a la propriété suivante\footnote{Nous avons appris après coup qu'il existait le théorème des valeurs des entières qui englobait cette proposition.}:
 
 \begin{prop}
-Le graphe $G=(V,E)$ construit précédemment à un flot maximal si et seulement si il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
+Le graphe $G=(V,E)$ construit précédemment à un flot maximal si et seulement s'il existe un flot maximal à coefficient entier, i.e. le coefficient de chaque arc est soit $0$ soit $1$. 
 \label{prop1}
 \end{prop}
 
 \begin{proof}
-Le sens réciproque est évident. Il suffit de montrer le sens direct. Par la suite on fait l'hypothèse que chaque agent a reçu au moins un objet et réciproquement. Par maximalité, tous les $c(o_j,t)$ et les $c(s,a_i)$ sont à $1$. Le seul cas intéressant se situe quand un objet est distribué entre plusieurs agents. Soit $\mathcal{F}$ un float maximum. Soit $o$ un tel objet et $a_k$ les agents assignés à $o$. Alors par maximalité du flot on a $\sum_{\substack{k\in K}} c_{\mathcal{F}}(a_k,o)=1$. La construction consiste à choisir un agent $k$ parmi les $a_k$ et lui assigner cet objet en mettant sa capacité dans ce nouveau flot à $1$. Par construction du graphe, on peut répartir les capacités restant des arc $(a_{-k}; o)$ sur les autres objets assignés à l'agent $k$ (on comble les trous). On peut itérer ce processus jusqu'à ce que toutes les arrêtes soient des coefficients entiers.
+Le sens réciproque est évident. Il suffit de montrer le sens direct. Par la suite on fait l'hypothèse que chaque agent a reçu au moins un objet et réciproquement. Par maximalité, tous les $c(o_j,t)$ et les $c(s,a_i)$ sont à $1$. Le seul cas intéressant se situe quand un objet est distribué entre plusieurs agents. Soit $\mathcal{F}$ un float maximum. Soit $o$ un tel objet et $a_k$ les agents assignés à $o$. Alors par maximalité du flot on a $\sum_{\substack{k\in K}} c_{\mathcal{F}}(a_k,o)=1$. La construction consiste à choisir un agent $k$ parmi les $a_k$ et lui assigner cet objet en mettant sa capacité dans ce nouveau flot à $1$. Par construction du graphe, on peut répartir les capacités des arc $(a_{-k}; o)$ sur les autres objets assignés à l'agent $k$ (on comble les trous). On peut itérer ce processus jusqu'à ce que toutes les arêtes soient des coefficients entiers.
 \end{proof}
 
-Cette construction ne garanti en rien la maximalité du flot vis à vis des utilités des agents. C'est l'algorithme décrit dans la partie suivante qui va s'en assurer.
+Cette construction ne garantit en rien la maximalité du flot vis à vis des utilités des agents. C'est l'algorithme décrit dans la partie suivante qui va s'en assurer.
 
 \subsubsection{Description de l'algorithme : }
 \begin{algorithm}
@@ -285,9 +285,9 @@ $G \gets G(V,E)$\;
 \end{algorithm}
     
 
-On ne prouve pas la correction de l'algorithme formellement. Par construction du graphe et des capacités, on a $\forall i \in \{1,\dots, n\},\ z_i(x)>\lambda$. Donc par la proposition \ref{prop1}, si l'algorithme de flot ne trouve pas de solution, alors c'est que le $\lambda$ choisit est trop grand. Sinon, alors on peut le faire grandir. Afin d'éviter d'itérer sur toutes les arrêtes du graphes (dans le pire des cas), nous avons utilisé une recherche dichotomique.
+On ne prouve pas la correction de l'algorithme formellement. Par construction du graphe et des capacités, on a $\forall i \in \{1,\dots, n\},\ z_i(x)>\lambda$. Donc par la proposition \ref{prop1}, si l'algorithme de flot ne trouve pas de solution, alors c'est que le $\lambda$ choisi est trop grand. Sinon, alors on peut le faire grandir. Afin d'éviter d'itérer sur toutes les arêtes du graphe (dans le pire des cas), nous avons utilisé une recherche dichotomique.
 
-A noter que dans l'implémentation, nous avons implémenté le test d'égalité du \textbf{while} avec un compteur. Comme la recherche dichotomique met un temps logarithmique par rapport au données, on a choisit que le nombre d'itérations devrait être proportionnel à $2\log_2 size$\footnote{$size^2$ étant à peu prêt le nombre d'arêtes du graphe}. Après quelques essais, nous avons mis comme coefficient de proportionnalité $2$.
+A noter que dans l'implémentation, nous avons implémenté le test d'égalité du \textbf{while} avec un compteur. Comme la recherche dichotomique met un temps logarithmique par rapport aux données, on a choisi le nombre d'itérations de telle sorte qu'il devrait être proportionnel à $2\log_2 size$\footnote{$size^2$ étant à peu prêt le nombre d'arêtes du graphe}. Après quelques essais, nous avons mis comme coefficient de proportionnalité $2$.
 
 \subsection{Question 5}
 On formule le programme linéaire suivant :
@@ -326,7 +326,7 @@ Vous trouverez les résultats dans le tableau \ref{question6}
 
 On remarque dans ces résultats que l'algorithme utilisant les flots est plus lent. Pour autant, on ne peut pas dire que cette dernière méthode est plus lente. En effet, le modèle du programme linéaire de $\mathcal{P}_1$ est implémenté avec \textit{gurobi} qui utilise le C/C++ qui est  beaucoup plus rapide que le Python. Afin d'avoir des mesures un peu plus comparable, il faudrait implémenter l'algorithme de graphe en C/C++ efficacement ! 
 
-Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite donc de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et son but premier n'est pas la performance pure, elle n'est donc pas certainement pas optimisée.
+Cependant, les résultats peuvent laisser penser que l'approche par programmation linéaire est plus rapide en pratique. Ceci n'est pas très étonnant. Gurobi est un outil payant et maintenu par quelques dizaines de personnes. L'algorithme du simplexe profite donc de nombreuses améliorations. A l'inverse, la librairie pygraph est en python, et son but premier n'est pas la performance pure, elle n'est donc certainement pas optimisée.
 
 \subsection{Question 7}
 D'après les tableaux \ref{question7}, on peut observer que maximiser la satisfaction de l'agent le moins satisfait entraîne une répartition plus équitable des produits que lorsque l'on maximise la moyenne. A contrario, la moyenne des satisfactions par le programme $\mathcal{P}_1$ à tendance à être plus faible que la moyenne des satisfactions du programme $\mathcal{P}_0$.
@@ -377,10 +377,10 @@ Afin de comparer les programmes $\mathcal{P}_1$ et $\mathcal{P}_2$, on se propos
 L'association ASCII est une association de récupération de matériel informatique. Elle vient de réparer deux ordinateurs. Le premier ordinateur est un Macbook pro de 2010 et l'autre ordinateur est un PC sorti en 2009 avec une configuration moyenne sous Debain. Deux personnes se sont prononcés pour récupérer ces ordinateurs :
 \begin{itemize}
 \item Mr Michu souhaite un ordinateur pour faire de la bureautique. Il n'a pas de préférence personnel.
-\item Mr Suckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Biensûr, il a une préférence pour l'ordinateur sous Debian.
+\item Mr Suckerberg souhaite un ordinateur afin de l'aider dans le développement de sa nouvelle idée pour conquérir le monde. Bien sûr, il a une préférence pour l'ordinateur sous Debian.
 \end{itemize}
 
-La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de Mr. Suckerberg. L'association a donc définit une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
+La tâche de l'association ASCII est de distribuer les ordinateurs afin de satisfaire au maximum les besoin de Mr. Michu et de Mr. Suckerberg. L'association a donc défini une valeur qui correspond à l'utilité d'un des ordinateurs pour chacun des clients.
 
 L'association a définit que l'utilité de Mr Michu pour les des deux ordinateurs est $2$ puisque ce dernier n'a pas de préférence.
 Par contre, pour Mr Suckerberg, l'association à définit que l'utilité pour lui d'avoir le Macbook pro serait de $3$ et de $10^6$ s'il avait l'ordinateur sous Debian. 
@@ -409,7 +409,7 @@ A l'inverse, par le programme $\mathcal{P}_2$, il y a qu'une solution possible :
 
 En effet, la satisfaction de Mr Suckerberg est plus grande dans la solution $1$ que dans la solution $2$. Cela entraîne donc que la fonction objectif est plus grande dans la solution $1$ que dans la solution $2$ car la satisfaction de Mr Michu n'a pas changé.
 
-On vient donc de trouver deux solutions différentes tel qu'avec le programme $\mathcal{P}_1$ la satisfaction de Mr Suckerberg soit strictement plus petit que dans la solution du programme $\mathcal{P}_2$ tandis que celle de Mr Michu n'a pas changé.
+On vient donc de trouver deux solutions différentes telles qu'avec le programme $\mathcal{P}_1$ la satisfaction de Mr Suckerberg soit strictement plus petite que dans la solution du programme $\mathcal{P}_2$ tandis que celle de Mr Michu n'a pas changé.
 
 Les remarques qu'on peut en tirer c'est que maximiser seulement la satisfaction de l'agent le moins satisfait n'est pas suffisant. En effet, comme on le voit dans l'exemple précédent, il peut y avoir plusieurs solutions et alors on ne sait pas laquelle sera donnée par le simplexe. Afin de pallier ce problème, il faut dire au simplexe qu'il faut tout de même maximiser la satisfaction des agents sans pour autant outrepasser l'objectif premier de maximiser la satisfaction de l'agent le moins satisfait. Pour cela, on rajoute un facteur $\varepsilon$ qui permet de différencier les différentes solutions possibles trouvées par le programme $\mathcal{P}_1$.
 
@@ -447,7 +447,7 @@ L'algorithme utilisant les flots afin de procéder à l'approche égalitariste e
 \item la recherche dichotomique se fait dans l'autre sens.
 \end{itemize}
 
-Les deux algorithmes étant similaire, nous n'explicitons pas le nouvel algorithme. Nous donnons juste le calcul des capacités : 
+Les deux algorithmes étant similaires, nous n'explicitons pas le nouvel algorithme. Nous donnons juste le calcul des capacités : 
 \begin{align*}
 \forall i,j \in \{1, \dots, n\} c(a_i;o_j)&=1 \mbox{ si } z_i(x)^*-u_{i,j}<\lambda\\
 \forall i,j \in \{1, \dots, n\} c(a_i;o_j)&=0 \mbox{ sinon}\\
@@ -474,7 +474,7 @@ Comme à la question $6$, on s'aperçoit que l'implémentation par graphe semble
 
 \subsection{Question 12}
 
-L'affectation multiple est une généralisation du problème d'affectation simple. L'agent peut recevoir plusieurs objets et chaque objet est en différent exemplaires.
+L'affectation multiple est une généralisation du problème d'affectation simple. L'agent peut recevoir plusieurs objets et chaque objet est en différents exemplaires.
 
 Afin de considérer les changements, on va découper cette question en deux parties. Une première partie qui regardera seulement le côté programmation linéaire, et une seconde partie où l'on regardera l'approche par les graphes.
 
@@ -484,7 +484,7 @@ D'abord on va considérer les modifications à faire par rapport au programme $\
 
 \paragraph{Maximiser la moyenne des satisfactions : }
 
-Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\},\ \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième types de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet existe en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
+Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le premier type de contraintes obligeait les agents à ne choisir qu'un objet. Cela correspond au cas où $\forall i \in \{1,..,n\},\ \alpha_i =1$. Ce $1$ se répercutait dans le membre de droite. Donc cela ce généralise très bien en remplaçant le membre de droite par $\alpha_i$. On peut faire la même remarque pour les $\beta_j$ qui correspondent au deuxième type de contraintes. On remarquera qu'on assouplit facilement la contrainte $m=n$. Cela se répercute juste sur le nombre de contraintes du problème. De plus, on remarquera que cette généralisation n'a aucune incidence sur la fonction objectif. La dernière chose à remarquer, est qu'en gardant des variables booléennes, on oblige à ce que chaque agent $i$ choisissent un objet une seule fois. Or, si cet objet existe en plusieurs exemplaires, l'agent $i$ voudra peut-être le prendre plusieurs fois. Il faut alors relâcher le domaine des variables. On obtient donc le programme linéaire $\mathcal{P'}_0$ suivant :
 
 \begin{mdframed}[style=MyFrame]
 
@@ -496,7 +496,7 @@ Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le pre
 \begin{fonctionobj}
 
 \fobj{\boldmax \ \frac{1}{n}\ \sum_{\substack{1\leq i,j \leq n,m}} u_{i,j}x_{i,j}}
-{avec $u_{i,j}$ les coefficients d'utilités du bien $i$ pour l'agent $j$}
+{avec $u_{i,j}$ les coefficients d'utilité du bien $i$ pour l'agent $j$}
 \end{fonctionobj}
 
 \begin{contraintes}
@@ -509,7 +509,7 @@ Dans le programme $\mathcal{P}_0$, nous avions deux types de contraintes. Le pre
 
 \paragraph{Approche égalitariste : } Dans l'approche égalitariste, les modifications faites précédemment ne changent pas. De plus, la notion de satisfaction ne change pas. Par conséquent le programme $\mathcal{P}_1$ se généralise simplement en appliquant les modifications précédentes.
 
-\paragraph{Approche par regret : } cette approche se généralise très bien à une petite différence prêt. $r_i(x)$ est définit en utilisant $z_i^*$. Seulement la définition de $z_i^*$ s'applique seulement si l'agent choisit un seul objet. Il faut donc donner une nouvelle définition de $z_i^*$. Moralement $z_i^*$ est un majorant de la satisfaction maximale que peut espérer l'agent $i$. Cependant si l'agent $i$ peut recevoir $\alpha_i$ objets, alors $\alpha_i \times \boldmax \{u_{i,j} \mid j\in \{1,..., m\}$ est bien un majorant mais pas une borne supérieure. On peut donc affiner la définition de $z_i^*$ pour obtenir une borne supérieure. 
+\paragraph{Approche par regret : } cette approche se généralise très bien à une petite différence prêt. $r_i(x)$ est défini en utilisant $z_i^*$. Seulement la définition de $z_i^*$ s'applique seulement si l'agent choisit un seul objet. Il faut donc donner une nouvelle définition de $z_i^*$. Moralement $z_i^*$ est un majorant de la satisfaction maximale que peut espérer l'agent $i$. Cependant si l'agent $i$ peut recevoir $\alpha_i$ objets, alors $\alpha_i \times \boldmax \{u_{i,j} \mid j\in \{1,..., m\}$ est bien un majorant mais pas une borne supérieure. On peut donc affiner la définition de $z_i^*$ pour obtenir une borne supérieure. 
 
 Soit $\mathcal{U}_i$ le multiensemble des utilités de l'agent $i$ : 
 $$\mathcal{U}_i=(U_i,m)$$ où 
@@ -586,7 +586,7 @@ On peut donc en déduire le programme linéaire suivant $\mathcal{L}_k(x)$ afin 
 \end{mdframed}
 \captionof{lstlisting}{Programme linéaire $\mathcal{L}_k$}
 
-L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfaction qui soit \textit{équitable}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement content même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfait. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
+L'intérêt de résoudre ce problème dans le contexte du partage équitable est d'assurer une répartition des satisfactions qui soient \textit{équitables}. C'est à dire qu'il n'y ait pas seulement $n-k$ agents qui soit extrêmement contents même si cela peut-être profitable pour l'intérêt de tous, mais que les $k$ agents soient aussi satisfaits. On pourrait aussi voir ça d'une certaine façon pour contrer le \textit{principe de Pareto}.
 
 \subsection{Question 14}
 
