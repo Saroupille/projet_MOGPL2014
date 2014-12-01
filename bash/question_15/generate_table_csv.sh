@@ -8,7 +8,7 @@ echo "question 15"
 
 #number of test case for a n and a M fixed
 test_number=10
-size="10 50 100"
+size="10 50"
 #every value of n
 #size="10 50 100 500 1000"
 #every value of M
@@ -43,10 +43,13 @@ do
 	for n in ${size}
 	do	
 		echo "compute the models when n=${n}"
+		time_t=0
+		value_t=0
 		#for each test case
 		for i in $(seq 1 ${test_number})
 		do
 			#command to run the model
+			echo "start $i/$test_number"
 			tmp_file=$(mktemp)
 			command_run_model="${CC} ${MODEL} -M ${m} -n ${n} > ${tmp_file}"
 			eval "${command_run_model}"
@@ -56,6 +59,7 @@ do
 			#echo "$value"
 			time_t="$time"+${time_t:-0}
 			value_t="$value"+${value_t:-0}
+			echo $value_t
 		done
 		echo "end of the execution of the models"
 		time_avg=$(echo "scale=2; ($time_t) / ${test_number}" | bc -l)

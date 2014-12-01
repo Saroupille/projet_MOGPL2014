@@ -9,6 +9,11 @@ file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1,file_path+'/../utils')
 from command_line import *
 
+#pull the utilities from a triangular law
+def utilites(size,value_max):
+    return [[triangular(0,value_max) for i in range(size)] for j in range(size)]
+
+
 #insert variables in the model
 def createVariables(m, options):
 
@@ -18,8 +23,10 @@ def createVariables(m, options):
 
         #the name of the variable is "x:i:j"
     #the variable is a binary
-    #there are size*size variables    
-    return [[m.addVar(vtype=GRB.BINARY, name=":".join(["x",str(i),str(j)])) \
+    #there are size*size variables
+    #Variables is a tuple. The first component is the same as P0, the second is the variable in the
+    #objective function
+    return [[m.addVar(vtype=GRB.BINARY, name="_".join(["x",str(i),str(j)])) \
              for j in range(size)] for i in range(size)],m.addVar(vtype=GRB.SEMICONT , name="zmin")
 
 def setObjectiveFunction(m, options, zmin):
@@ -31,14 +38,13 @@ def setObjectiveFunction(m, options, zmin):
     m.setAttr("ModelSense", GRB.MAXIMIZE)
 
 #add the constraints to the model
-def addConstraints(m,options, Variables,zmin):
-
-                                                            
+def addConstraints(m,options, Variables,utils,zmin):
     size=options["size"]
     value_max=options["value_max"]
     if options["verbose"]:
         print("Add the constraints to the model")
-    
+
+    #same constraints as P0
     for i in range(size):
         l=LinExpr() #one object per person
         c=LinExpr() #one person per object
@@ -48,19 +54,20 @@ def addConstraints(m,options, Variables,zmin):
         
         m.addConstr(l,GRB.EQUAL,1., "l"+str(i))
         m.addConstr(c,GRB.EQUAL,1., "c"+str(i))
-        
+
+
+    #we add the constraint that zmin must be less than any other satisfaction
     for i in range(size):
         z=LinExpr()
         for j in range(size):
-            z.add(Variables[i][j], triangular(0,value_max))
-            #for each variable, we add its coefficient in the objective function
-            #the coefficient is a random value following a triangular law of parameter [0;M] center in M/2
+            z.add(Variables[i][j], utils[i][j])
+
         z.add(zmin, -1)
         m.addConstr(z, GRB.GREATER_EQUAL,0., "z"+str(i))
         
 
-#create the model P0
-def createModel(options):
+#create the model P1
+def createModel(options,utils):
     if options["verbose"]:
         print("Creating the model...")
     m= Model("P1")
@@ -68,15 +75,18 @@ def createModel(options):
     m.update()
     setObjectiveFunction(m, options, zmin)
     m.update()
-    addConstraints(m, options, Variables,zmin)
+    addConstraints(m, options, Variables,utils,zmin)
     m.update()
     return m
 
 #main function
 def main(argv, current_directory):
     options=parse_command_line(argv)
-    m=createModel(options)
-
+    size=options["size"]
+    value_max=options["value_max"]
+    utils=utilites(size,value_max)
+    m=createModel(options,utils)
+    
     #write the model in a file
     if options["write"]:
         #check if the sub directory "models" exists and create it otherwise
@@ -111,10 +121,10 @@ def main(argv, current_directory):
                 for c in constraints:
                     if m.getCoeff(c,v)!=0:
                         answerfile.write(" ".join([str(v.varName),str(v.x),str(m.getCoeff(c,v))+"\n"]))
-            #else:
-            #    answerfile.write(" ".join([str(v.varName),str(v.x),str(m.getCoeff(c,v))+"\n"]))    
-
+          
         answerfile.close()
+
+        
     #TO DO : change this stuff
     if options["printanswer"]:
         constraints=[m.getConstrByName("z"+str(i)) for i in range(options["size"])]
