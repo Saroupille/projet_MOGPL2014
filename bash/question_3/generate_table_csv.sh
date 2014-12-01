@@ -1,5 +1,5 @@
 #!/bin/sh
-
+echo "question 3"
 #number of test case for a n and a M fixed
 test_number=10
 #for testing
@@ -10,7 +10,6 @@ size="10 50 100 500 1000"
 max_value="10 100 1000"
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-echo ${DIR}
 #where is the model
 MODEL="${DIR}/../../python/modelisation_P0/P0.py"
 
@@ -18,18 +17,24 @@ MODEL="${DIR}/../../python/modelisation_P0/P0.py"
 CC="python2.7"
 
 #repertory with the solutions 
-SOLUTIONS="solutions/"
-
-#temporary directory to store some data
-TMP=tmp
+SOLUTIONS="solutions"
 
 #directory where the results are stored
-CSV=csv
+CSV=${DIR}/csv
 
-#check if the csv diretory exists
+#check if the solutions directory exists
+if [ ! -d "$SOLUTIONS" ]
+then
+	$(mkdir $SOLUTIONS)
+else
+	rm -fr $SOLUTIONS/*
+fi
+
+
+#check if the csv directory exists
 if [ ! -d "$CSV" ]
 then
-	$(mkdir csv)
+	$(mkdir $CSV)
 else
 	rm -fr $CSV/*
 fi
@@ -40,7 +45,7 @@ for m in ${max_value}
 do
 	echo "start new csv file for m=${m}"
 	#header of the table
-	echo "n, temps moyen, satisfaction moyenne, satisfaction minimum, satisfaction maximum" >> csv/data_${m}.csv
+	echo "n, temps moyen, satisfaction moyenne, satisfaction minimum, satisfaction maximum" >> $CSV/question_3_${m}.csv
 	#iterate over n
 	for n in ${size}
 	do	
@@ -70,7 +75,7 @@ do
 		#one more time, we use awk to compute th average
 		time_avg="$(eval "${times} | awk '{sum+= \$1} END { print sum/NR}'")"
 		#Store all the data in the csv file
-		echo "${n}, ${time_avg}, ${current_avg}, ${current_min}, ${current_max}" >> csv/data_${m}.csv
+		echo "${n}, ${time_avg}, ${current_avg}, ${current_min}, ${current_max}" >> $CSV/question_3_${m}.csv
 	done
 done
 

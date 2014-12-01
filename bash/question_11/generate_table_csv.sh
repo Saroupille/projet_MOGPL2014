@@ -1,5 +1,5 @@
 #!/bin/sh
-
+echo "question 11"
 #TO DO :
 # * rajouter une option pour supprimer les fichiers temporaires
 # * rajouter une option pour supprimer les fichiers solutions
@@ -14,35 +14,23 @@ size="10 50 100"
 #every value of M
 max_value="100"
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 #where is the model
-MODEL="../../modelisation_P3/P3.py"
+MODEL_P3="${DIR}/../../python/modelisation_P3/P3.py"
 
-MODEL_GRAPH="../../modelisation_graphe/approche_regret.py"
+MODEL_GRAPH="${DIR}/../../python/modelisation_graphe/approche_regret.py"
+
 #executable
-CC="gurobi.sh"
-CC_GRAPH="python2.7"
+CC="python2.7"
 
-#repertory with the solutions 
-SOLUTIONS="solutions/"
-
-#temporary directory to store some data
-TMP=tmp
 
 #directory where the results are stored
-CSV=csv
-
-#check if the tmp directory exists
-if [ ! -d "$TMP" ]
-then
-	$(mkdir tmp)
-else
-	rm -fr $TMP/*
-fi
+CSV=${DIR}/csv
 
 #the same for csv
 if [ ! -d "$CSV" ]
 then
-	$(mkdir csv)
+	$(mkdir $CSV)
 else
 	rm -fr $CSV/*
 fi
@@ -53,7 +41,7 @@ for m in ${max_value}
 do
 	echo "start new csv file for m=${m}"
 	#header of the table
-	echo "Méthode,10,50,100" >> csv/time_${m}.csv
+	echo "Méthode,10,50,100" > $CSV/question_11_${m}.csv
 	#iterate over n
 	for n in ${size}
 	do
@@ -64,10 +52,10 @@ do
 		for i in $(seq 1 ${test_number})
 		do
 			#command to run the model
-			command_run_model="{ /usr/bin/time -f "%e" ${CC} ${MODEL} -a ${m}_${n}_${i} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
-			command_run_graph="{ /usr/bin/time -f "%e" ${CC_GRAPH} ${MODEL_GRAPH} -v -M ${m} -n ${n}; } 2>&1 | tail -n 1"
+			command_run_model="{ /usr/bin/time -f "%e" ${CC} ${MODEL_P3} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
+			command_run_graph="{ /usr/bin/time -f "%e" ${CC} ${MODEL_GRAPH} -M ${m} -n ${n}; } 2>&1 | tail -n 1"
 			#run the model
-			echo $command_run_model
+			#echo $command_run_graph
 			time=$(echo $(eval "${command_run_model}"))
 			time_graph=$(echo $(eval "${command_run_graph}"))
 			global_time=$(echo "${global_time} + ${time}" | bc -l)
@@ -80,6 +68,6 @@ do
 	done
 	result=$(echo ${result#?})
 	result_graph=$(echo ${result_graph#?})
-	echo "\$\\mathcal{P}_1\$, ${result}" >> csv/time_${m}.csv
-	echo "flot, ${result_graph}" >> csv/time_${m}.csv
+	echo "\$\\mathcal{P}_1\$, ${result}" >> $CSV/question_11_${m}.csv
+	echo "flot, ${result_graph}" >> $CSV/question_11_${m}.csv
 done

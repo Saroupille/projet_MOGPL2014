@@ -1,25 +1,26 @@
 #!/bin/sh
-
+echo "question 16 bis"
 #number of test case for a n and a M fixed
 nb_test="50"
-val_max_n="20"
+val_max_n="10"
 max_M="100"
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 #where is the model OWA
-MODELOWA="../../modelisation_OWA/OWA.py"
+MODELOWA="${DIR}/../../python/modelisation_OWA/OWA.py"
 #where is the model P0
-MODELP0="../../modelisation_P0/P0.py"
+MODELP0="${DIR}/../../python/modelisation_P0/P0.py"
 
 #executable
 CC="python2.7"
 
-#repertory with the solutions
-SOLUTIONS="solutions"
-CSV="csv"
 
+#repertory with the solutions
+SOLUTIONS="${DIR}/solutions"
+CSV="${DIR}/csv"
 if [ ! -d "$SOLUTIONS" ]
 then
-	$(mkdir solutions)
+	$(mkdir $SOLUTIONS)
 else
 	rm -fr $SOLUTIONS/*
 fi
@@ -28,13 +29,14 @@ fi
 
 if [ ! -d "$CSV" ]
 then
-	$(mkdir csv)
+	$(mkdir $CSV)
 else
 	rm -fr $CSV/*
 fi
 
 for ((n=5; n<=${val_max_n}; n+=5))
 do
+	echo "OWA: start processing the data for n=${n}"
 	moyGlobal="0"
 	minGlobal="0"
 	maxGlobal="0"
@@ -42,7 +44,7 @@ do
 	ecartGlobal="0"
 
 	#echo "compute the models when n=${n}"
-	echo "Iteration, Model, valeur n, moyenne, val max, val min, difference max-min, ecart type" >> "$CSV/data_${n}.csv"
+	echo "Iteration, Model, valeur n, moyenne, val max, val min, difference max-min, ecart type" >> "$CSV/question_16_bis_data_${n}.csv"
 	for ((i=0; i<${nb_test}; i++))
 	do
 		sum="0"
@@ -50,8 +52,8 @@ do
         # valeur arbitraire pour l'initialisation, car nous n'avons pas de valeur retourne par le programme
 		min="10000000"
 		max="0"
-
-		command_run_model_OWA="${CC} ${MODELOWA} -p -n ${n} -M ${max_M} > OWA_${n}_${i}.tmp"
+		tmp_file=$(mktemp)
+		command_run_model_OWA="${CC} ${MODELOWA} -p -n ${n} -M ${max_M} > $tmp_file"
 		eval "${command_run_model_OWA}"
 
 		while read line  
@@ -81,7 +83,7 @@ do
 				fi
 
 			fi
-		done < OWA_${n}_${i}.tmp
+		done < $tmp_file
 
 		compt=$(echo "$compt" | bc -l)
 		sum=$(echo "$sum" | bc -l)
@@ -104,13 +106,13 @@ do
 					sumome=$(echo "${sumome}+${tmpo}" | bc -l )
 				fi
 			fi
-		done < OWA_${n}_${i}.tmp
+		done < $tmp_file
 
 		ome=$(echo "${sumome}/${compt}" | bc -l )
 		ome=$(echo "sqrt(${ome})" | bc -l )
 
 		#format CSV: OWA, VALEUR N, moyen, min, max, distance max-min ecrat type
-		echo "${i}, OWA, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc -l), ${ome}" >> "$CSV/data_${n}.csv"
+		echo "${i}, OWA, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc -l), ${ome}" >> "$CSV/question_16_bis_data_${n}.csv"
 
 		moyGlobal=$(echo "${moyGlobal} + ${moy}" | bc -l)
 		maxGlobal=$(echo "${maxGlobal} + ${max}" | bc -l)		
@@ -126,9 +128,9 @@ do
 	ecartGlobal=$(echo "scale=2; ${ecartGlobal} / ${nb_test}" | bc -l)
 
 
-	echo "GLOBAL OWA ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
-	echo "Model, moyenne, val max, val min, difference max-min, ecrat type" >> "$CSV/res_${n}.csv"
-	echo "OWA, ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}" >> "$CSV/res_${n}.csv"
+	#echo "GLOBAL OWA ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
+	echo "Model, moyenne, val max, val min, difference max-min, ecrat type" >> "$CSV/question_16_bis_${n}.csv"
+	echo "OWA, ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}" >> "$CSV/question_16_bis_${n}.csv"
 
 	#MODEL P0
 	moyGlobal="0"
@@ -139,7 +141,8 @@ do
 
 	for ((i=0; i<${nb_test}; i++))
 	do
-		command_run_model_P0="${CC} ${MODELP0} -p -n ${n} -M ${max_M} > P0_${n}_${i}.tmp"
+		tmp_file=$(mktemp)
+		command_run_model_P0="${CC} ${MODELP0} -p -n ${n} -M ${max_M} > $tmp_file"
 		eval "${command_run_model_P0}"
 
 		sum="0"
@@ -174,7 +177,7 @@ do
 					fi
 				fi
 			fi
-		done < P0_${n}_${i}.tmp
+		done < $tmp_file
 
 		compt=$(echo "$compt" | bc -l)
 		sum=$(echo "$sum" | bc -l)
@@ -197,13 +200,13 @@ do
 					sumome=$(echo "${sumome}+${tmpo}" | bc -l )
 				fi
 			fi
-		done < P0_${n}_${i}.tmp
+		done < $tmp_file
 
 		ome=$(echo "${sumome}/${compt}" | bc -l )
 		ome=$(echo "sqrt(${ome})" | bc -l )
 
 		#format CSV: P0, VALEUR N, moyen, min, max, distance max-min
-		echo "${i}, P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc -l), ${ome}" >> "$CSV/data_${n}.csv"
+		echo "${i}, P0, ${n}, ${moy}, ${min}, ${max}, $(echo "${max}-${min}" | bc -l), ${ome}" >> "$CSV/question_16_bis_data_${n}.csv"
 
 		moyGlobal=$(echo "${moyGlobal} + ${moy}" | bc -l)
 		maxGlobal=$(echo "${maxGlobal} + ${max}" | bc -l)		
@@ -219,12 +222,11 @@ do
 	ecartGlobal=$(echo "scale=2; ${ecartGlobal} / ${nb_test}" | bc -l)
 
 
-	echo "GLOBAL P0 ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
-	echo "P0, ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}" >> "$CSV/res_${n}.csv"
+	#echo "GLOBAL P0 ${n}: ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}"
+	echo "P0, ${moyGlobal}, ${maxGlobal}, ${minGlobal}, ${maxminGlobal}, ${ecartGlobal}" >> "$CSV/question_16_bis_${n}.csv"
 
 
 done
-rm *.tmp
 rm -fr ${SOLUTIONS}
 
 
